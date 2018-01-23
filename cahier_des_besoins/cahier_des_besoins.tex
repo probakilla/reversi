@@ -4,8 +4,10 @@
 \usepackage [utf8]{inputenc}
 \usepackage [francais]{babel}
 
+
 \usepackage {float}
 \usepackage {graphicx}
+
 
 \title {Cahier des besoins - Reversi}
 \author {Guillaume CHUPIN, Benoit FAGET, Alexis PICHON, Julien PILLEUX}
@@ -16,6 +18,30 @@
 \newpage
 \tableofcontents
 \newpage
+
+\section {Introduction}
+Nous souhaitons programmer un joueur de Revesi complet qui pourra être confronté a d'autre implémentation via des tournois.
+
+\section {Description et analyse de l'existant}
+Le jeu de reversi consiste en un jeu de pion opposant deux adversaires et le but du jeu et soit d'éliminer tous les pions adverses, soit de terminer avec le plus de pion possible à la fin du jeu (qui survient quand plus aucun mouvement n'est possible pour chacun des joueurs), un joueur ne peut placer un pion que si ce dernier capture au moins un pion adverse. Pour capturer des pions adversaires il faut que ceux-la ce retrouve entre un de vos pions et celui que vous posez sur le plateau. La capture de pion s'effectue dans les huit directions à la fois.
+De part, c'est simple règles on peut déjà entrevoir différente stratégie. En effet, certaine position sont meilleures que d'autre, car offrant moins de possibilité à l'adversaire pour la reprendre si ce n'est aucune. Par exemple, les quatre coins du plateau font parti de ces positions imprenables, de plus une fois ces positions prise les positions adjacentes deviennent également imprenables et ainsi de suite (voir FIGURE \ref{bord_stable}).
+%Image des coins du plateau
+\begin {figure}[H]
+  \centering
+  \includegraphics [scale = 0.5]{images/bord_stable.png}
+  \label {bord_stable}
+  \caption {Les 4 coins du plateau}
+\end {figure}
+Mais il existe également d'autre position imprenable comme par exemple une position qui se situe entre des pions adverses, car ce dernier ne pourra pas non plus reprendre la position. Par exemple dans la FIGURE \ref{exemple_insertion} on peut le joueur noir (les X) peut effectuer une insertion en jouant en A3, le joueur blanc ne pourra pas reprendre ce pion et au tour d'après, quelquesoit le coup du joueur blanc le joeur noir pourra jouer en A1 et avoir ainsi un des coins si désiré et ainsi agrandir sa stabilité, en ayant 3 pions indétronable.
+%Image de l'insertion
+\begin {figure}[H]
+  \centering
+  \includegraphics [scale = 0.5]{images/Insertion.png}
+  \label {exemple_insertion}
+  \caption {Exemple d'insertion}
+\end {figure}
+
+Une autre stratégie, reviendrait à diminuer le nombre de coups de l'adversaire tout en augmentant son propre nombre de coups, pour cela on va privilégié les coups qui nous rapporte le moins de pion, mais tout en faisant attention à ce que l'adversaire ne puisse pas nous enlever tout nos pions. Réduire le nombre de coups de l'adversaire n'est pas tous il faut aussi tendre a ne lui laisser la possibilité de ne jouer que des mauvais coups.
 
 \section {Besoins fonctionnels}
 \begin {itemize}
