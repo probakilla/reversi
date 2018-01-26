@@ -1,8 +1,10 @@
 \documentclass[10pt,a4paper]{article}
 
+\usepackage[colorlinks=true,urlcolor=blue,linkcolor=blue]{hyperref}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[french]{babel}
+\usepackage{fancyvrb}
 
 \usepackage{float}
 \usepackage{graphicx}
@@ -32,19 +34,12 @@ Différentes stratégies autour du jeu existent. En effet, certaines positions s
 
 \begin{figure}[H]
 \centering
-\includegraphics[scale=0.8]{bord_stable.png}
+\includegraphics[scale=0.8]{images/bord_stable.png}
 \label{bord_stable}
 \caption{Quatre coins du plateau}
 \end{figure}
 
 D'autres positions imprenables sont celles qui se retrouvent entre des pions adverses, car ce dernier ne pourra pas non plus les reprendre. Par exemple, dans la FIGURE \ref{exemple_insertion}, on peut voir que le joueur noir (représenté par un 'X') peut effectuer une insertion en jouant en 'A3', le joueur blanc ne pourra pas reprendre ce pion. Au tour suivant, quelque soit le coup du joueur blanc, le joueur noir pourra jouer en 'A1' et ainsi avoir un des coins si désirés, lui permetant ainsi de gagner en stabilité en possédant maintenant trois pions indétronables.
-
-\begin{figure}[H]
-\centering
-\includegraphics[scale=0.8]{exemple_insertion.png}
-\label{exemple_insertion}
-\caption{Exemple d'insertion}
-\end{figure}
 
 Une autre stratégie reviendrait à diminuer le nombre de coups de l'adversaire tout en augmentant son propre nombre de coups, pour cela on va privilégier les coups rapportant le moins de pions, mais tout en faisant attention à ce que l'adversaire ne puisse pas nous enlever tous nos pions. Réduire le nombre de coups de l'adversaire n'est pas tout, il faut aussi tendre à ne lui laisser la possibilité de ne jouer que des mauvais coups.\\
 
@@ -195,47 +190,50 @@ Sinon, proposer à l'utilisateur de sauvegarder l'état de la partie en cours av
 \item Afficher la version du programme ;
 \end{itemize}
 
-\subsection{Grille de jeu}
-\label{board}
+% Début nouvelle partie post TD1
+\begin {itemize}
+\item  L'entrée de l'utilisateur est insensible à la casse.
+\item  L'utilisateur peut choisir un coup à jouer en entrant les coordonnées de la case où il désire jouer, par exemple il peut choisir la case \verb!a2!.
+\item  L'utilisateur peut sauvegarder sa partie à tout moment en entrant le caractère 'q'. Le fichier de sortie de la sauvegarde est un fichier \verb!ASCII! contenant l'état acutel du plateau plus le tour du prochain joueur (voir Fig. \ref{fig:exemple_save}).
+  \begin{figure}[H]    
+    \centering
+    \begin{BVerbatim}
+      O
+      _ _ _ _ _ _
+      _ _ _ _ _ _
+      _ _ X O _ _
+      _ _ O X _ _
+      _ _ _ _ _ _
+      _ _ _ _ _ _ 
+    \end{BVerbatim}
+    \caption {Exemple de fichier de sauvegarde.\label{fig:exemple_save}}
+    \end{figure}
 
-Les cases en abscisses seront numérotées à l'aide de chiffres, les cases en ordonnées seront numérotées à l'aide de lettres (voir figure \ref{exemple_board}). Le joueur pourra alors choisir son mouvement en entrant dans la console la combinaison correspondante à la case souhaitée (exemple : 'A2' ou 'a2').\\
-
-Les cases vides de la grille devront être représentées à l'aide du caractère '\_', le joueur blanc sera représenté par un 'O' et le joueur noir par un 'X'. Les cases où le joueur courant peut effectuer son prochain coup pourront être représentées par '*' (voir FIGURE \ref{exemple_board}). Ce plateau de jeu sera implémenté à l'aide d'une structure de donnée bitboard.
-
-\begin{figure}[H]
-\centering
-\includegraphics[scale=0.8]{exemple_board.png}
-\label{exemple_board}
-\caption{Grille initiale}
-\end{figure}
-
-\subsection{Sauvegarde}
-\label{save}
-
-L'utilisateur peut décider de quitter le jeu et de sauvegarder l'état actuel de la partie en entrant 'Q' (ou 'q') dans la console. Si l'utilisateur décide de quitter le jeu, le programme lui donnera le choix de sauvegarder la partie en cours ou non.En entrant 'Y' (ou 'y'), le programme sauvegardera dans un fichier le tour du joueur courant ('X' ou 'O') ainsi que l'état de la grille actuelle. Le fichier sera présenté de la même manière que le jeu, mais sans la numérotation des cases ni les mouvements possibles (représentés avec le caractère '*') (voir FIGURE \ref{exemple_save}). Le format de sortie pour le fichier de sauvegarde doit être \textit{.txt}. Si le joueur entre 'N' (ou 'n'), le programme ne sauvegardera pas le plateau.
-
-\begin{figure}[H]
-\centering
-\includegraphics[scale=0.8]{exemple_save.png}
-\label{exemple_save}
-\caption{Sauvegarde grille initiale}
-\end{figure}
-
-\subsection{Options}
-\label{options}
-
-Au lancement du programme, l'utilisateur devra pouvoir modifier certains paramètres de la partie grâce à des options :\\
-\begin{itemize}
-\item [-c, --contest] : Permet de démarrer le programme en mode compétition. Cette option prend en entrée un fichier contenant la sauvegarde d'un jeu et joue le coup suivant.
-\item [-s, --size] : Permet de démarrer le programme en ayant modifié la taille du plateau de jeu. Cette option prend en entrée un entier compris entre 1 et 5, ce qui permet de faire varier la taille du plateau de 2 à 10 cases.
-\item [-b, --black-ai] : Permet de démarrer le programme en ayant spécifié que l'ordinateur jouera pendant la partie et contrôlera les noirs.
-\item [-w, --white-ai] : Permet de démarrer le programme en ayant spécifié que l'ordinateur jouera pendant la partie et contrôlera les blancs.
-\item [-a, --all-ai] : Permet de démarrer le programme en ayant spécifié que l'ordinateur jouera la partie, il contrôlera les noirs et les blancs.
-\item [-h, --help] : Permet d'afficher la liste des options et leurs descriptions.
-\item [-v, --verbose]: Permet de démarrer le programme en mode verbeux.
-\item [-V, --version]: Permet d'afficher la version du programme.
+\item  Le programme doit contenir un mode contest peremttant de faire s'affronter deux intelligences artificielles. Ce mode de jeu prend en entrée un fichier de sauvegarde obtenu lorsque l'on quitte le programme.
+\item  La taille du plateau de jeu est modifiable grâce grâce à une option de lancement. Lors du lancement -s ou --size suivit d'une valeur entre 1 et 5 ce qui fait varier la taille de la grille de 2 à 10 cases en ne prenant que des valeur paires (Voir Fig. \ref{fig:exemple_taille}). Par défaut, la grille affichée sera de dimention \verb!8x8!.
+  \begin{figure}[H]    
+    \centering
+    \begin{BVerbatim}
+        1 2 3 4 
+      A _ _ _ _
+      B _ _ _ _
+      C _ _ _ _
+      D _ _ _ _
+      
+    \end{BVerbatim}
+    \caption {Exemple de grille générée avec l'option \textsc{-s2}.\label{fig:exemple_taille}}
+  \end{figure}
+\item  Il est possible de décider quel rôle donner à l'ia lors du lancement du programme.
+  \begin{description}
+  \item [-w, --white] Pour indiquer que l'ia jouera les pions blancs.
+  \item [-b, --black] Pour indiquer que l'ia jouera les pions noirs.
+  \item [-a, --all] Pour indiquer que l'ia jouera les deux camps.
+  \end{description}
+\item  La version du programme sera affchable avec l'option de lancement -V.
+\item  Le mode verbose de la partie sera activable au lancement du programme avec l'option -v.
+\item  Une aide est disponible pour l'utilisateur grâce à l'option -h ou --help. Elle liste l'ensemble des otpions du programme ainsi que leur description.
 \end{itemize}
-\newpage
+% Fin nouvelle partie post TD1.
 
 \section{Besoins non fonctionnels}
 
@@ -245,16 +243,17 @@ Au lancement du programme, l'utilisateur devra pouvoir modifier certains paramè
 \item Confiance : les règles doivent être respectées et les fichiers de sauvegarde doivent suivre le format et la forme attendue (voir \ref{save}).
 \end{itemize}
 
-\section{Diagrammes techniques}
-
-\subsection{Diagramme de cas d'utilisation}
-
 \begin{figure}[H]
 \centering
-\includegraphics[scale=0.5]{use_case.png}
+\includegraphics[scale=0.5]{images/use_case.png}
 \label{use_case}
 \caption{Diagramme de cas d'utilisation}
 \end{figure}
 
+\subsection{Diagrammes de séquence}
+
+\subsection{Diagramme de Gantt}
+
+\section{Bibliographie}
 
 \end{document}
