@@ -5,6 +5,9 @@
 \usepackage[T1]{fontenc}
 \usepackage[french]{babel}
 \usepackage{fancyvrb}
+\usepackage{tikz}
+\usepackage{pgf-umlsd}
+\usepgflibrary{arrows}
 
 \usepackage{float}
 \usepackage{graphicx}
@@ -51,144 +54,53 @@ Comme nous pouvons l'observer à travers les différentes stratégies, nous auro
 \newpage
 
 \section{Besoins fonctionnels}
+\label{sec:besoins_fonctionnels}
 
-\textbf{Lancer une nouvelle partie de Reversi entre deux utilisateurs :}\\
-\begin{itemize}
-\item Lancer le programme sans option dans une console de type bash ;
-\item Afficher un message de bienvenue et des explications sur le déroulement de la partie (voir \ref{board}) ;\\
-\item Initialiser la grille de jeu avec ses dimensions par défaut (voir \ref{board}) ;
-\item Déterminer les mouvements possibles pour le joueur en cours ;
-\item Mettre à jour la grille de jeu avec les mouvements possibles ;
-\item Afficher la grille de jeu ;\\
-\item (*) Proposer à l'utilisateur de saisir son mouvement ou de quitter la partie (voir \ref{board}) ;
-\item Vérifier que la saisie est valide, retourner à l'étape précédente si ce n'est pas le cas ;\\
-\end{itemize}
-Si l'utilisateur décide d'un mouvement à réaliser :
-\begin{itemize}
-\item Vérifier que le mouvement est valide, retourner à l'étape précédente si ce n'est pas le cas ;
-\item Mettre à jour la grille de jeu avec le mouvement fraîchement réalisé ;
-\item Terminer le tour et changer de joueur ;
-\item Déterminer les mouvements possibles pour le joueur en cours;
-\item Mettre à jour la grille de jeu avec les mouvements possibles ;
-\item Afficher la grille de jeu ;
-\item Si la partie se termine, afficher le vainqueur et quitter le programme.
-Sinon, retourner à l'étape (*) ;\\
-\end{itemize}
-Si l'utilisateur décide de quitter la partie :
-\begin{itemize}
-\item Proposer à l'utilisateur de sauvegarder l'état de la partie en cours avant de quitter (voir \ref{save}) ;
-\item Vérifier que la saisie est valide, retourner à l'étape précédente si ce n'est pas le cas ;
-\item Si souhaité, sauvegarder l'état de la partie en cours dans un fichier (voir \ref{save}) ;
-\item Quitter le programme ;
-\end{itemize}
-\newpage
+\subsection {Déroulement d'une partie}
+\label{sec:deroulement_partie}
 
-\textbf{Lancer une nouvelle partie de Reversi entre l'utilisateur et l'ordinateur :}\\
-\begin{itemize}
-\item Lancer le programme avec l'option -b ou -w dans une console de type bash (voir \ref{options}) ;
-\item Afficher un message de bienvenue et des explications sur le déroulement de la partie (voir \ref{board}) ;\\
-\item Initialiser la grille de jeu avec ses dimensions par défaut (voir \ref{board}) ;
-\item Déterminer les mouvements possibles pour le joueur en cours ;
-\item Mettre à jour la grille de jeu avec les mouvements possibles ;
-\item Afficher la grille de jeu ;\\
-\end{itemize}
-(*) Si c'est au tour de l'utilisateur :
-\begin{itemize}
-\item Proposer à l'utilisateur de saisir son mouvement ou de quitter la partie (voir \ref{board}) ;
-\item Vérifier que la saisie est valide, retourner à l'étape précédente si ce n'est pas le cas ;
-\end{itemize}
-Si l'utilisateur décide d'un mouvement à réaliser :
-\begin{itemize}
-\item Vérifier que le mouvement est valide, retourner à l'étape précédente si ce n'est pas le cas ;
-\item Mettre à jour la grille de jeu avec le mouvement fraîchement réalisé ;
-\item Terminer le tour et changer de joueur ;
-\item Déterminer les mouvements possibles pour le joueur en cours ;
-\item Mettre à jour la grille de jeu avec les mouvements possibles ;
-\item Afficher la grille de jeu ;
-\item Si la partie se termine, afficher le vainqueur et quitter le programme.
-Sinon, retourner à l'étape (*) ;\\
-\end{itemize}
-Si l'utilisateur décide de quitter la partie :
-\begin{itemize}
-\item Proposer à l'utilisateur de sauvegarder l'état de la partie en cours avant de quitter (voir \ref{save}) ;
-\item Vérifier que la saisie est valide, retourner à l'étape précédente si ce n'est pas le cas ;
-\item Si souhaité, sauvegarder l'état de la partie en cours dans un fichier (voir \ref{save}) ;
-\item Quitter le programme ;\\
-\end{itemize}
-(*) Si c'est au tour de l'ordinateur :
-\begin{itemize}
-\item Calculer un mouvement à l'aide de la technique d'exploration d'arbre classique choisie ;
-\item Mettre à jour la grille de jeu avec le mouvement fraîchement calculé ;
-\item Terminer le tour et changer de joueur ;
-\item Déterminer les mouvements possibles pour le joueur en cours ;
-\item Mettre à jour la grille de jeu avec les mouvements possibles ;
-\item Afficher la grille de jeu ;
-\item Si la partie se termine, afficher le vainqueur et quitter le programme.
-Sinon, retourner à l'étape (*) ;\\
-\end{itemize}
-\newpage
+% Diagrammes de séquences
+\begin{figure}[H]
+  \centering
+  \begin{sequencediagram}
+    % Instances
+    \newthread[blue]{user}{User} %[couleur]{nom 'variable'}{nom affichage}
+    \newthread[green]{game}{Reversi} % [distance]
+    \tikzstyle{inststyle}+=[bottom color=white, top color=white, rounded corners = 3mm]
+    \newinst[4]{board}{Plateau} 
 
-\textbf{Lancer une nouvelle partie de Reversi entre deux ordinateurs :}\\
-\begin{itemize}
-\item Lancer le programme avec l'option -a dans une console de type bash (voir \ref{options}) ;
-\item Afficher un message de bienvenue et des explications sur le déroulement de la partie (voir \ref{board}) ;\\
-\item Initialiser la grille de jeu avec ses dimensions par défaut (voir \ref{board}) ;
-\item Déterminer les mouvements possibles pour le joueur en cours ;
-\item Mettre à jour la grille de jeu avec les mouvements possibles ;
-\item Afficher la grille de jeu ;\\
-\item (*) Calculer un mouvement à l'aide de la technique d'exploration d'arbre classique choisie ;
-\item Mettre à jour la grille de jeu avec le mouvement fraîchement calculé ;
-\item Terminer le tour et changer de joueur ;
-\item Déterminer les mouvements possibles pour le joueur en cours ;
-\item Mettre à jour la grille de jeu avec les mouvements possibles ;
-\item Afficher la grille de jeu ;
-\item Si la partie se termine, afficher le vainqueur et quitter le programme.
-Sinon, retourner à l'étape (*) ;\\
-\end{itemize}
+    % Instanciation Plateau
+    \begin{messcall}{user}{./reversi}{game} % {source}{affichage}{destination}
+      \begin{call}{game}{create\_board()}{board}{Display rules and board} % {source}{affichage}{destination}{retour}
+      \end{call}
+    \end{messcall}
 
-\textbf{Répondre par un mouvement à un état de partie :}
-\begin{itemize}
-\item Lancer le programme avec l'option -c suivie du nom de fichier contenant l'état de partie dans une console de type bash (voir \ref{options}) ;\\
-\item Récupérer le joueur en cours et la grille de jeu à partir des données lues dans le fichier ;
-\item Déterminer les mouvements possibles pour le joueur en cours ;
-\item Mettre à jour la grille de jeu avec les mouvements possibles ;
-\item Afficher la grille de jeu ;\\
-\item Calculer un mouvement à l'aide de la technique d'exploration d'arbre classique choisie ;
-\item Mettre à jour la grille de jeu avec le mouvement fraîchement calculé ;
-\item Terminer le tour et changer de joueur ;
-\item Mettre à jour la grille de jeu avec les mouvements possibles ;
-\item Afficher la grille de jeu ;
-\item Si la partie se termine, afficher le vainqueur et quitter le programme.
-Sinon, proposer à l'utilisateur de sauvegarder l'état de la partie en cours avant de quitter (voir \ref{save}) ;
-\item Vérifier que la saisie est valide, retourner à l'étape précédente si ce n'est pas le cas ;
-\item Si souhaité, sauvegarder l'état de la partie en cours dans un fichier (voir \ref{save}) ;
-\item Quitter le programme ;\\
-\end{itemize}
-\newpage
+    % Le joueur joue un coup
+    \mess{user}{Play move}{game} % L'utilisateur choisi une case
+    \begin{call}{game}{play\_move(String)}{board}{update\_display()} % Le jeu passe la chaîne correspondante au plateau
+      \begin{call}{board}{check\_if\_valid()}{board}{valid OR not valid} % Le plateau vérifie la validité du mouvement.
+      \end{call}
+    \end{call}
 
-\textbf{Lancer une partie en modifiant les dimensions de la grille de jeu :}
-\begin{itemize}
-\item Lancer le programme avec l'option -s suivie d'un entier compris entre 1 et 5 dans une console de type bash (voir \ref{options}) ;
-\item Voir les descriptions de parties précédentes ;\\
-\end{itemize}
+    % La machine joue à son tour
+    \begin{call}{game}{ia\_play\_move(String)}{board}{update\_display()} % Normalement pas besoin de vérifier (si on code ça bien).
+    \end{call}
 
-\textbf{Afficher la liste des options disponibles et leurs descriptions :}
-\begin{itemize}
-\item Lancer le programme avec l'option -h dans une console de type bash (voir \ref{options}) ;
-\item Afficher la liste de options disponibles et leurs descriptions ;\\
-\end{itemize}
+    % Le joueur décide de quitter
+    \mess{user}{Enter q}{game}
+    \mess{game}{Ask save}{user}
+    \mess{user}{Type y}{game}
+    \begin{call}{game}{save\_game()}{board}{}
+    \end{call}
+    \begin{call}{game}{quit()}{game}{}
+    \end{call}
+    
+  \end{sequencediagram}
+  \caption{Diagramme séquentiel de déroulement d'une partie.\label{fig:diagramme_partie}}
+\end{figure}
 
-\textbf{Lancer une partie en mode verbeux :}
-\begin{itemize}
-\item Lancer le programme avec les options voulues ainsi que l'option -v dans une console de type bash (voir \ref{options}) ;
-\item Voir les descriptions de parties précédentes, toutes les opérations effectuées seront affichées explicitement ;\\
-\end{itemize}
-
-\textbf{Afficher la version du programme :}
-\begin{itemize}
-\item Lancer le programme avec l'option -V dans une console de type bash (voir \ref{options}) ;
-\item Afficher la version du programme ;
-\end{itemize}
+\subsection{Listes des fontionnalités}
+\label{sec:fonctionnalites}
 
 % Début nouvelle partie post TD1
 \begin {itemize}
@@ -229,12 +141,13 @@ Sinon, proposer à l'utilisateur de sauvegarder l'état de la partie en cours av
   \item [-b, --black] Pour indiquer que l'ia jouera les pions noirs.
   \item [-a, --all] Pour indiquer que l'ia jouera les deux camps.
   \end{description}
-\item  La version du programme sera affchable avec l'option de lancement -V.
-\item  Le mode verbose de la partie sera activable au lancement du programme avec l'option -v.
+\item  La version du programme sera affchable avec l'option de lancement -V. 
+\item  Le mode verbose de la partie sera activable au lancement du programme avec l'option -v. % Fleury a dit qu'il s'en battait les couilles du mode verbose hein.
 \item  Une aide est disponible pour l'utilisateur grâce à l'option -h ou --help. Elle liste l'ensemble des otpions du programme ainsi que leur description.
 \end{itemize}
 % Fin nouvelle partie post TD1.
 
+\newpage
 \section{Besoins non fonctionnels}
 
 \begin{itemize} 
@@ -250,9 +163,7 @@ Sinon, proposer à l'utilisateur de sauvegarder l'état de la partie en cours av
 \caption{Diagramme de cas d'utilisation}
 \end{figure}
 
-\subsection{Diagrammes de séquence}
-
-\subsection{Diagramme de Gantt}
+\section{Diagramme de Gantt}
 
 \section{Bibliographie}
 
