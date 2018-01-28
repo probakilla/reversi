@@ -29,7 +29,23 @@ Nous avons eu le choix entre utiliser le langage de programmation C ou le C++, n
 
 \section{Description et analyse de l'existant}
 
-Le jeu de Reversi consiste en un jeu de pions opposant deux adversaires dont le but est de terminer avec le plus grand nombre de pions à la fin de la partie. La partie se termine lorsque plus aucun mouvement n'est possible pour chacun des deux joueurs. Un joueur ne peut placer un pion que sur une case vide adjacente a un pion adverse et que si le pion ainsi posé permet la capture d'au moins un pion adverse. Pour capturer les pions adversaires, il faut que ceux-ci se retrouve entre un de vos pions déjà présent et celui que vous vous apprêtez à poser sur le plateau. La capture de pions peut s'effectuer dans les huit directions à la fois (voir Fig \ref{fig:aire_de_capture}).
+Le jeu de Reversi consiste en un jeu de pions opposant deux adversaires dont le but est de terminer avec le plus grand nombre de pions à la fin de la partie. La partie se termine lorsque plus aucun mouvement n'est possible pour chacun des deux joueurs. Le jeu commence avec quatre pion, deux par joueur, posé au centre d'un plateau de 8 par 8 (taille conventionnelle mais il existe des variantes avec un plateau plus petit ou plus grand), comme sur la Fig \ref{fig:début_du_jeu}.
+ \begin{figure}[H]    
+    \centering
+    \begin{BVerbatim}
+       1 2 3 4 5 6 7 8
+     A _ _ _ _ _ _ _ _
+     B _ _ _ _ _ _ _ _
+     C _ _ _ _ _ _ _ _
+     D _ _ _ O X _ _ _
+     E _ _ _ X O _ _ _
+     F _ _ _ _ _ _ _ _
+     G _ _ _ _ _ _ _ _
+     H _ _ _ _ _ _ _ _
+    \end{BVerbatim}
+    \caption {Initialisation du jeu.\label{fig:début_du_jeu}}
+    \end{figure}
+Un joueur ne peut placer un pion que sur une case vide adjacente a un pion adverse et que si le pion ainsi posé permet la capture d'au moins un pion adverse. Pour capturer les pions adversaires, il faut que ceux-ci se retrouve entre un de vos pions déjà présent et celui que vous vous apprêtez à poser sur le plateau. La capture de pions peut s'effectuer dans les huit directions à la fois (voir Fig \ref{fig:aire_de_capture}).
  \begin{figure}[H]    
     \centering
 \begin{tikzpicture}
@@ -54,48 +70,105 @@ Le jeu de Reversi consiste en un jeu de pions opposant deux adversaires dont le 
   \draw[->] (x) -- (l);
   \end{tikzpicture}
     \caption {Aire de capture d'un pion.\label{fig:aire_de_capture}}
-    \end{figure}
-\subsection{Stratégies}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%A voir si on l'enlève%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Différentes stratégies autour du jeu existent. En effet, certaines positions sont meilleures que d'autres, car offrant moins de possibilités à l'adversaire de la reprendre, si ce n'est aucune. Par exemple, les quatre coins du plateau font parties de ces positions imprenables. De plus, une fois ces positions prises, les positions adjacentes deviennent également imprenables, et ainsi de suite (voir Fig \ref{fig:bord_stable}).
+ \end{figure}
+ \tikzstyle{block} = [rectangle, draw, text width=6em, text centered, rounded corners, minimum height=4em]
+ 
+\subsection{Programmes}
+Pour qu'un programme puisse savoir quel coup jouer, il faut qu'il calcule qu'elle peuvent être les réponse de son adversaire et ainsi se projeter quelque coup dans l'avenir. On stocke cela dans un arbre où les noeuds correspondent à l'état du jeu et les arcs sont les coups joués(voir Fig \ref{fig:exemple_arbre}.
+  \begin{figure}[H]    
+    \centering
+ \begin{tikzpicture}
+     
+\node[block] (a) at (3,5){\begin{BVerbatim}
+  1 2 3 4 5 6
+A _ _ _ _ _ _
+B _ _ _ _ _ _
+C _ _ O X _ _
+D _ _ X O _ _
+E _ _ _ _ _ _
+F _ _ _ _ _ _ 
+\end{BVerbatim}
+     };
+ \node[block]  (b) at (-1,0) {\begin{BVerbatim}
+  1 2 3 4 5 6
+A _ _ _ _ _ _
+B _ _ _ _ _ _
+C _ X X X _ _
+D _ _ X O _ _
+E _ _ _ _ _ _
+F _ _ _ _ _ _ 
+\end{BVerbatim}
+ };
+  \node[block]  (c) at (2,0) {\begin{BVerbatim}
+  1 2 3 4 5 6
+A _ _ _ _ _ _
+B _ _ X _ _ _
+C _ _ X X _ _
+D _ _ X O _ _
+E _ _ _ _ _ _
+F _ _ _ _ _ _ 
+\end{BVerbatim}
+  };
+    \node[block]  (d) at (5,0) {\begin{BVerbatim}
+  1 2 3 4 5 6
+A _ _ _ _ _ _
+B _ _ _ _ _ _
+C _ _ O X _ _
+D _ _ X X X _
+E _ _ _ _ _ _
+F _ _ _ _ _ _ 
+\end{BVerbatim}
+    };
+ \node[block]  (e) at (8,0) {\begin{BVerbatim}
+  1 2 3 4 5 6
+A _ _ _ _ _ _
+B _ _ _ _ _ _
+C _ _ O X _ _
+D _ _ X X _ _
+E _ _ _ X _ _
+F _ _ _ _ _ _
+\end{BVerbatim}
+    };
+      
+  \draw[->] (a) -- node [text width=2em,midway,above] {c2} (b);
+  \draw[->] (a) -- node [text width=2em,midway,above] {b3} (c);
+  \draw[->] (a) -- node [text width=3em,midway,above] {d5} (d);
+  \draw[->] (a) -- node [text width=4em,midway,above] {e4}(e);
+ \end{tikzpicture}
+     \caption {Exemple d'arbre.\label{fig:exemple_arbre} }
+ \end{figure}
+Un programme qui ainsi pourrait prévoir tout les coups possible pourrait facilement savoir quel coup jouer mais de part le nombre exponentiel de coup possible il n'est pas envisageable de le faire dans un temps restreint, il faut donc trouver un moyen d'obtenir de bon résultat sans explorer entièrement l'arbre de recherche des coups possible.
+\subsubsection {Iago}
+Dans les années 1980, un programme nommé Iago est développé.
+Ce dernier, optimise la recherche du prochain coup en limitant la recherche à un certain nombre de coup dans le futur, déterminé par le temps alloué pour ledit coup.
+Il utilise également la technique d'exploration d'arbre Minimax-ab. Minimax est une technique qui part du principe que l'adversaire joue également de manière optimale, ainsi dans l'exploration on va essayer de maximiser nos bon coup tout en minimisant les bon coups adverse.
+
+Minimax-ab est juste une amélioration de Minimax permettant de réduire le nombre de noeud.
+La fonction d'évaluation utilisé par Iago se base sur les principes du jeu suivant:
+\begin {itemize}
+\item \textbf{Bord stable}: Un pion est stable si l'adversaire ne peut pas reprendre votre pion pour le reste de la partie. Les quatre coins du plateau de jeu sont des positions stable et une fois un de ses.
+la première est celle des bords stables, le programme essaye d'avoir un bord entièrement composé de pion stable lui appartenant (un pion stable est un pion qui ne pourra pas être repris par l'adversaire pour le reste de la partie). Dans la Fig \ref{fig:bord_stable} on voit un bord stable sur le bas de la grille.
 
  \begin{figure}[H]    
     \centering
     \begin{BVerbatim}
        1 2 3 4 5 6
-     A X _ _ _ _ X
+     A _ _ _ _ _ _
      B _ _ _ _ _ _
      C _ _ _ _ _ _
      D _ _ _ _ _ _
-     E _ _ _ _ X X
-     F X _ _ _ X X 
-    \end{BVerbatim}
-    \caption {Les bords stable.\label{fig:bord_stable}}
-    \end{figure}
-
-D'autres positions imprenables sont celles qui se retrouvent entre des pions adverses, car ce dernier ne pourra pas non plus les reprendre. Par exemple, dans la Fig \ref{fig:exemple_insertion}, on peut voir que le joueur noir (représenté par un 'X') peut effectuer une insertion en jouant en 'A3', le joueur blanc ne pourra pas reprendre ce pion. Au tour suivant, quelque soit le coup du joueur blanc, le joueur noir pourra jouer en 'A1' et ainsi avoir un des coins si désirés, lui permettant ainsi de gagner en stabilité en possédant maintenant trois pions indétronables.
- \begin{figure}[H]    
-    \centering
-    \begin{BVerbatim}
-       1 2 3 4 5 6
-     A _ O _ O _ _
-     B _ _ O O _ _
-     C _ _ X _ _ _
-     D _ _ _ _ _ _
      E _ _ _ _ _ _
-     F _ _ _ _ _ _ 
+     F X X X X X X 
     \end{BVerbatim}
-    \caption {Exemple d'insertion.\label{fig:exemple_insertion}}
-    \end{figure}
-Une autre stratégie reviendrait à diminuer le nombre de coups de l'adversaire tout en augmentant son propre nombre de coups, pour cela on va privilégier les coups rapportant le moins de pions, mais tout en faisant attention à ce que l'adversaire ne puisse pas nous enlever tous nos pions. Réduire le nombre de coups de l'adversaire n'est pas tout, il faut aussi tendre à ne lui laisser la possibilité de ne jouer que des mauvais coups.\\
+    \caption {Exemple de bord stable.\label{fig:bord_stable}}
+ \end{figure}
+\item \textbf{Stabilité interne}:
+  \end {itemize}
 
-Comme nous pouvons l'observer à travers les différentes stratégies, nous aurons besoin d'explorer les arbres des coups possibles, mais la complexité d'une telle démarche devient rapidement gigantesque, nous empêchant de parcourir en un temps raisonnable l'arbre en entier. Fort heureusement, nous n'aurons pas besoin de le parcourir en entier, car nous pourrons déterminer que certaines branches de l'arbre ne valent pas le coup d'être explorées.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%ùùù
-\subsection{Programmes}
-%%%%%%%%%%%A Détailler%%%%%%%%%%%%%%%%%
-Dans les années 80, le programme qui était le champion à ce jeu se nommait Iago. Il se basait sur les stratégies énoncées précédemment, mais de part la contrainte technique de temps due aux tournois, ils ont dû utiliser certaines astuces. Ainsi, le programme calcule pour chaque coup le temps qu'il peut passer sur celui-ci. Ensuite, durant le temps alloué pour chaque coup, il recherche dans son arbre jusqu'à une profondeur de 7, qu'ils ont jugée comme étant la profondeur donnant le meilleur résultat dans un temps restreint. Pour réduire son temps de réponse, ils ont aussi amélioré les fonctions d'évaluation, mais ils ont surtout réduit le nombre de noeuds que le programme devra examiner.
+\subsubsection {Bill}
+
+\subsubsection {Logistello}
 \newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Besoins fonctionnels}
 \label{sec:besoins_fonctionnels}
 
