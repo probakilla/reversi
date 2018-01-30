@@ -25,11 +25,11 @@
 
 Notre projet consiste en l'élaboration d'un joueur de Reversi complet développé en suivant certaines règles afin de pouvoir être confronté à d'autre implémentations au cours d'un tournoi prévu qui confrontera notre programme à celui d'une seconde équipe de développement ayant reçu le même sujet.\\
 
-Nous avons eu le choix entre utiliser le langage de programmation C ou le C++, nous avons décidé de prendre le C++. Notre programme appliquera les algorithmes les plus fréquents pour un joueur de Reversi et utilisera au mieux les bitboards. Un bitboard est une structure de donnée qui est très efficace pour encoder un plateau de jeu tel que celui du reversi, un bitboard est un ensemble de bit ou chaque bit correspond a une case du plateau et indique la présence ou l'absence d'une pièce, ainsi on devra utilisé deux bitboard, un pour la présence de pion blanc et un autre pour la présence de pion noir.  L'interface utilisateur sera purement en mode texte dans un bash, on se concentrera plutôt sur le développement d'heuristiques propres au jeu. Le projet sera essentiellement dirigé vers l'utilisation de techniques d'exploration d'arbre classiques telles que Minimax-ab, Negamax, Negascout, MTD(f), Monte-Carlo Tree Search (MCTS), etc. Il nous reste à définir laquelle développer en première, et si nous aurons le temps d'en faire d'autres.
+Nous avons eu le choix entre utiliser le langage de programmation C ou le C++, nous avons décidé de prendre le C++. Notre programme appliquera les algorithmes les plus fréquents pour un joueur de Reversi et utilisera au mieux les bitboards. Un bitboard est une structure de données qui est très efficace pour encoder un plateau de jeu tel que celui du reversi, un bitboard est un ensemble de bit ou chaque bit correspond à une case du plateau et indique la présence ou l'absence d'une pièce, ainsi on devra utiliser deux bitboards, un pour la présence de pion blanc et un autre pour la présence de pion noir. L'interface utilisateur sera purement en mode texte dans un bash, on se concentrera plutôt sur le développement d'heuristiques propres au jeu. Le projet sera essentiellement dirigé vers l'utilisation de techniques d'exploration d'arbre classiques telles que Minimax-ab, Negamax, Negascout, MTD(f), Monte-Carlo Tree Search (MCTS), etc. Il nous reste à définir laquelle développer en première, et si nous aurons le temps d'en faire d'autres.
 
 \section{Description et analyse de l'existant}
 
-Le jeu de Reversi consiste en un jeu de pions opposant deux adversaires dont le but est de terminer avec le plus grand nombre de pions à la fin de la partie. La partie se termine lorsque plus aucun mouvement n'est possible pour chacun des deux joueurs. Le jeu commence avec quatre pion, deux par joueur, posé au centre d'un plateau de 8 par 8 (taille conventionnelle mais il existe des variantes avec un plateau plus petit ou plus grand), comme sur la Fig \ref{fig:début_du_jeu}.
+Le jeu de Reversi consiste en un jeu de pions opposant deux adversaires dont le but est de terminer avec le plus grand nombre de pions à la fin de la partie. La partie se termine lorsque plus aucun mouvement n'est possible pour chacun des deux joueurs. Le jeu commence avec quatre pions, deux par joueur, posé au centre d'un plateau de huit par huit (taille conventionnelle, mais il existe des variantes avec un plateau plus petit ou plus grand), comme sur la Fig \ref{fig:début_du_jeu}.
  \begin{figure}[H]    
     \centering
     \begin{BVerbatim}
@@ -74,7 +74,7 @@ Un joueur ne peut placer un pion que sur une case vide adjacente a un pion adver
  \tikzstyle{block} = [rectangle, draw, text width=6em, text centered, rounded corners, minimum height=4em]
  
 \subsection{Programmes}
-Pour qu'un programme puisse savoir quel coup jouer, il faut qu'il calcule qu'elle peuvent être les réponse de son adversaire et ainsi se projeter quelque coup dans l'avenir. On stocke cela dans un arbre où les noeuds correspondent à l'état du jeu et les arcs sont les coups joués(voir Fig \ref{fig:exemple_arbre}.
+Pour qu'un programme puisse savoir quel coup jouer, il faut qu'il calcule qu'elles peuvent être les réponses de son adversaire et ainsi se projeter quelques coups dans l'avenir. On stocke cela dans un arbre où les noeuds correspondent à l'état du jeu et les arcs sont les coups joués(voir Fig \ref{fig:exemple_arbre}).
   \begin{figure}[H]    
     \centering
  \begin{tikzpicture}
@@ -137,12 +137,12 @@ F _ _ _ _ _ _
  \end{tikzpicture}
      \caption {Exemple d'arbre.\label{fig:exemple_arbre} }
  \end{figure}
-  Un programme qui ainsi pourrait prévoir tout les coups possible pourrait facilement savoir quel coup jouer mais de part le nombre exponentiel de coup possible il n'est pas envisageable de le faire dans un temps restreint, il faut donc trouver un moyen d'obtenir de bon résultat sans explorer entièrement l'arbre de recherche des coups possible.\newline
-  La majorité, si ce n'est tous, les algorithme utilise la méthode minimax pour trouver le meilleur coup à jouer dans l'arbre. Minimax ce base sur le fait que l'ennemi répondra de la manière la plus avantageuse pour lui, donc on doit choisir le meilleur coup à jouer en sachant que l'ennemi fera de même. Afin, de connaître les chances de gagner pour le joueur avec un certain coup, minimax utilise une fonction d'évaluation.
+  Un programme qui ainsi pourrait prévoir tous les coups possible pourrait facilement savoir quel coup jouer, mais de part le nombre exponentiel de coup possible il n'est pas envisageable de le faire dans un temps restreint, il faut donc trouver un moyen d'obtenir de bon résultat sans explorer entièrement l'arbre de recherche des coups possibles.\newline
+  La majorité, si ce n'est tout, les algorithmes utilisent la méthode minimax pour trouver le meilleur coup à jouer dans l'arbre. Minimax ce base sur le fait que l'ennemi répondra de la manière la plus avantageuse pour lui, donc on doit choisir le meilleur coup à jouer en sachant que l'ennemi fera de même. Afin, de connaître les chances de gagner pour le joueur avec un certain coup, minimax utilise une fonction d'évaluation.
 
-=  Cette fonction d'évaluation se base principalement sur trois principe du jeu.
+ Cette fonction d'évaluation se base principalement sur deux principes du jeu.
   \begin{itemize}
-  \item \textbf{Stabilité des pions}: Un pion est dit stable si l'ennemi n'a pas la possibilité de pouvoir le reprendre et ce pour le reste de la partie. Ainsi, les quatre coins du plateau de jeu sont des positions ou les pions seront stable. De plus, les pions adjacent de la même couleur obtiendrons également le statut stable. Par exemple dans la Figure \ref{fig:pion_stable}, tous les pions du plateau sont stable.
+  \item \textbf{Stabilité des pions}: Un pion est dit stable si l'ennemi n'a pas la possibilité de pouvoir le reprendre et ce pour le reste de la partie. Ainsi, les quatre coins du plateau de jeu sont des positions ou les pions seront stables. De plus, les pions adjacent de la même couleur obtiendrons également le statut stable. Par exemple dans la Figure \ref{fig:pion_stable}, tous les pions du plateau sont stable.
    \begin{figure}[H]    
     \centering
     \begin{BVerbatim}
@@ -157,11 +157,11 @@ F _ _ _ _ _ _
     \caption {Exemple de pions stable.\label{fig:pion_stable}}
    \end{figure}
 
-\item \textbf{Mobilité}: Avoir un grand choix de coups est assez important car augmente les chances d'avoir de bon coup, tandis que avoir un faible nombre de coup nous entraînera inéluctablement vers de mauvaise décision, voir pire vers aucune décision possible et dans ce cas la défaite nous est quasiment assurer. Ainsi, l'idéal est d'avoir un grand choix de coups, tout en réduisant le nombre de coups de l'adversaire (et ainsi réduire ces possibilité de victoire).
+\item \textbf{Mobilité}: Avoir un grand choix de coup est assez important, car augmente les chances d'avoir de bon coup, tandis qu'avoir un faible nombre de coup nous entraînera inéluctablement vers de mauvaise décision, voir pire vers aucune décision possible et dans ce cas la défaite nous est quasiment assurée. Ainsi, l'idéal est d'avoir un grand choix de coups, tout en réduisant le nombre de coups de l'adversaire (et ainsi réduire ses possibilités de victoire).
   \newline
-  De plus, faire le dernier coup, est assez avantageux car permet de prendre des pions qui ne seront jamais repris car la partie sera finit, ainsi il peut être intéressant si on n'a pas le coup final, d'essayer d'obtenir le dernier coup. Naturellement ces le joueur blanc qui  à ce dernier coup, ainsi le joueur noir souhaitant obtenir le dernier coup devra faire passer un tour au joueur blanc.
+  De plus, faire le dernier coup, est assez avantageux, car permet de prendre des pions qui ne seront jamais repris, car la partie sera finie, ainsi il peut être intéressant si on n'a pas le coup final, d'essayer d'obtenir le dernier coup. Naturellement c'est le joueur blanc qui  a ce dernier coup, ainsi le joueur noir souhaitant obtenir le dernier coup devra faire passer un tour au joueur blanc.
   Cette notion de dernier coup, existe aussi avant la fin de la partie, en effet, sur le plateau il apparaîtra, vers la fin de la partie, différente zone ou cette technique de dernier pourra également être utilisé.
-  Par exemple, dans la Figure \ref{fig:mobilité}, le joueur noir à la possibilité d'avoir un dernier coup local en g8, alors que si il décidé de jouer en a2 il donnerais la possibilité au joueur blanc de faire un dernier coup local en a1.
+  Par exemple, dans la Figure \ref{fig:mobilité}, le joueur noir à la possibilité d'avoir un dernier coup local en g8, alors que s'il décidé de jouer en a2 il donnerais la possibilité au joueur blanc de faire un dernier coup local en a1.
   \begin{figure}[H]    
     \centering
     \begin{BVerbatim}
@@ -177,13 +177,24 @@ F _ _ _ _ _ _
   \end{figure}
     \end{itemize}
 \subsubsection {Iago}
-Dans les années 1980, un programme nommé Iago est développé.
-Ce dernier, optimise la recherche du prochain coup en limitant la recherche à un certain nombre de coup dans le futur, déterminé par le temps alloué pour ledit coup.
-Il améliore également minimax en réduisant le nombre de noeuds évalué en n'explorant pas certains sous arbre dont peut déjà savoir qu'il ne nous mènerons pas vers un meilleur résultat que les sous-arbres déjà exploré. Ainsi, l'ordre dans lequel les branches seront évalué est importante, ainsi pour chaque recherche Iago organise ses noeuds dans l'ordre croissant.
+Dans les années 1980, un programme nommé Iago est développé. Il fut parmis les premiers programmes à démontrer qu'il était possible de créé un programme capable de battre le meilleur joueur humain.
+Ce dernier, optimise la recherche du prochain coup en limitant la recherche à un certain nombre de coup dans le futur, déterminé par le temps alloué pour ledit coup.\newline
+
+Il améliore également minimax en réduisant le nombre de noeuds évalué en n'explorant pas certains sous arbre dont peut déjà savoir qu'ils ne nous mèneront pas vers un meilleur résultat que les sous-arbres déjà exploré. Ainsi, l'ordre dans lequel les branches sont évaluées est importante, ainsi pour chaque recherche Iago organise ses noeuds dans l'ordre croissant.\newline
+
+La fonction d'évaluation dont il hérite à été faite a la ``main'', en effet ils ont testé plusieurs variations, basé sur les principes vu précédemment, en les faisant s'affronter l'une contre l'autre et ont gardé la meilleure.
 
 
 
 \subsubsection {Bill}
+Peu après la création de Iago, le programme Bill est également créé et ce dernier bat Iago à chaque fois.
+Il est assez similaire à Iago, mais combine les probabilités avec l'utilisation de Minimax, permettant de mieux simuler le comportement humain. Ainsi, un coup légal obtient une probabilité de 100\% tandis que les coups illégaux ont une valeur calculée. Ensuite, le programme pourra facilement savoir quel coup privilégier afin d'atteindre assurément une case du plateau. \newline
+
+Un autre ajout, est de bornée la valeur de retour de Minimax ce qui permet d'exclure plus de branche, mais le risque reste que si la borne a été mal choisie la recherche retourne une valeur incorrect, mais pour parer cela il suffit de voir si la valeur retournée correspond à une des bornes est ainsi on sera que le résultat se situe en dehors de ces bornes.
+\newline
+
+Il utilise également une table de hashage pour stocker les meilleurs coups obtenus %%voir l'utilité de cette table%%
+ et profite également du temps que son adversaire met à jouer pour la mettre à jour (alors que Iago se contentait d'attendre le coup de l'adversaire). 
 
 \subsubsection {Logistello}
 \newpage
