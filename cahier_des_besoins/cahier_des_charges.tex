@@ -137,33 +137,51 @@ F _ _ _ _ _ _
  \end{tikzpicture}
      \caption {Exemple d'arbre.\label{fig:exemple_arbre} }
  \end{figure}
-Un programme qui ainsi pourrait prévoir tout les coups possible pourrait facilement savoir quel coup jouer mais de part le nombre exponentiel de coup possible il n'est pas envisageable de le faire dans un temps restreint, il faut donc trouver un moyen d'obtenir de bon résultat sans explorer entièrement l'arbre de recherche des coups possible.
-\subsubsection {Iago}
-Dans les années 1980, un programme nommé Iago est développé.
-Ce dernier, optimise la recherche du prochain coup en limitant la recherche à un certain nombre de coup dans le futur, déterminé par le temps alloué pour ledit coup.
-Il utilise également la technique d'exploration d'arbre Minimax-ab. Minimax est une technique qui part du principe que l'adversaire joue également de manière optimale, ainsi dans l'exploration on va essayer de maximiser nos bon coup tout en minimisant les bon coups adverse.
+  Un programme qui ainsi pourrait prévoir tout les coups possible pourrait facilement savoir quel coup jouer mais de part le nombre exponentiel de coup possible il n'est pas envisageable de le faire dans un temps restreint, il faut donc trouver un moyen d'obtenir de bon résultat sans explorer entièrement l'arbre de recherche des coups possible.\newline
+  La majorité, si ce n'est tous, les algorithme utilise la méthode minimax pour trouver le meilleur coup à jouer dans l'arbre. Minimax ce base sur le fait que l'ennemi répondra de la manière la plus avantageuse pour lui, donc on doit choisir le meilleur coup à jouer en sachant que l'ennemi fera de même. Afin, de connaître les chances de gagner pour le joueur avec un certain coup, minimax utilise une fonction d'évaluation.
 
-Minimax-ab est juste une amélioration de Minimax permettant de réduire le nombre de noeud.
-La fonction d'évaluation utilisé par Iago se base sur les principes du jeu suivant:
-\begin {itemize}
-\item \textbf{Bord stable}: Un pion est stable si l'adversaire ne peut pas reprendre votre pion pour le reste de la partie. Les quatre coins du plateau de jeu sont des positions stable et une fois un de ses.
-la première est celle des bords stables, le programme essaye d'avoir un bord entièrement composé de pion stable lui appartenant (un pion stable est un pion qui ne pourra pas être repris par l'adversaire pour le reste de la partie). Dans la Fig \ref{fig:bord_stable} on voit un bord stable sur le bas de la grille.
-
- \begin{figure}[H]    
+=  Cette fonction d'évaluation se base principalement sur trois principe du jeu.
+  \begin{itemize}
+  \item \textbf{Stabilité des pions}: Un pion est dit stable si l'ennemi n'a pas la possibilité de pouvoir le reprendre et ce pour le reste de la partie. Ainsi, les quatre coins du plateau de jeu sont des positions ou les pions seront stable. De plus, les pions adjacent de la même couleur obtiendrons également le statut stable. Par exemple dans la Figure \ref{fig:pion_stable}, tous les pions du plateau sont stable.
+   \begin{figure}[H]    
     \centering
     \begin{BVerbatim}
        1 2 3 4 5 6
-     A _ _ _ _ _ _
-     B _ _ _ _ _ _
-     C _ _ _ _ _ _
-     D _ _ _ _ _ _
-     E _ _ _ _ _ _
-     F X X X X X X 
+     A X _ _ _ _ X
+     B X _ _ _ _ _
+     C X _ _ _ _ _
+     D X _ _ _ _ _
+     E X _ _ _ X X
+     F X _ _ _ X X 
     \end{BVerbatim}
-    \caption {Exemple de bord stable.\label{fig:bord_stable}}
- \end{figure}
-\item \textbf{Stabilité interne}:
-  \end {itemize}
+    \caption {Exemple de pions stable.\label{fig:pion_stable}}
+   \end{figure}
+
+\item \textbf{Mobilité}: Avoir un grand choix de coups est assez important car augmente les chances d'avoir de bon coup, tandis que avoir un faible nombre de coup nous entraînera inéluctablement vers de mauvaise décision, voir pire vers aucune décision possible et dans ce cas la défaite nous est quasiment assurer. Ainsi, l'idéal est d'avoir un grand choix de coups, tout en réduisant le nombre de coups de l'adversaire (et ainsi réduire ces possibilité de victoire).
+  \newline
+  De plus, faire le dernier coup, est assez avantageux car permet de prendre des pions qui ne seront jamais repris car la partie sera finit, ainsi il peut être intéressant si on n'a pas le coup final, d'essayer d'obtenir le dernier coup. Naturellement ces le joueur blanc qui  à ce dernier coup, ainsi le joueur noir souhaitant obtenir le dernier coup devra faire passer un tour au joueur blanc.
+  Cette notion de dernier coup, existe aussi avant la fin de la partie, en effet, sur le plateau il apparaîtra, vers la fin de la partie, différente zone ou cette technique de dernier pourra également être utilisé.
+  Par exemple, dans la Figure \ref{fig:mobilité}, le joueur noir à la possibilité d'avoir un dernier coup local en g8, alors que si il décidé de jouer en a2 il donnerais la possibilité au joueur blanc de faire un dernier coup local en a1.
+  \begin{figure}[H]    
+    \centering
+    \begin{BVerbatim}
+       1 2 3 4 5 6 
+     A _ O O O _ _
+     B _ X O X _ O
+     C O X O X O O
+     D O X X X X O
+     E X X X O O O
+     F O O O O _ O 
+    \end{BVerbatim}
+    \caption {Exemple du principe de mobilité.\label{fig:mobilité}}
+  \end{figure}
+    \end{itemize}
+\subsubsection {Iago}
+Dans les années 1980, un programme nommé Iago est développé.
+Ce dernier, optimise la recherche du prochain coup en limitant la recherche à un certain nombre de coup dans le futur, déterminé par le temps alloué pour ledit coup.
+Il améliore également minimax en réduisant le nombre de noeuds évalué en n'explorant pas certains sous arbre dont peut déjà savoir qu'il ne nous mènerons pas vers un meilleur résultat que les sous-arbres déjà exploré. Ainsi, l'ordre dans lequel les branches seront évalué est importante, ainsi pour chaque recherche Iago organise ses noeuds dans l'ordre croissant.
+
+
 
 \subsubsection {Bill}
 
@@ -295,5 +313,8 @@ la première est celle des bords stables, le programme essaye d'avoir un bord en
 \end{center}
 
 \section{Bibliographie}
+\bibliographystyle{alpha}
+\bibliography{reversi}
+\nocite{*}
 
 \end{document}
