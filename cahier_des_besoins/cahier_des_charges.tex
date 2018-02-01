@@ -23,12 +23,12 @@
 \newpage
 
 \section{Introduction}
-\label{seq:intro}
+
 Notre projet consiste en l'élaboration d'un joueur de Reversi complet, développé en suivant certaines règles, afin de pouvoir être confronté à d'autre implémentations au cours d'un tournoi prévu qui le confrontera au programme d'une seconde équipe de développement ayant reçu le même sujet.\\
 
-Nous avions le choix entre le langage de programmation C et le C++, nous avons choisi d'utiliser le C++. Notre programme doit appliquer les algorithmes les plus fréquents pour un joueur de Reversi et doit utiliser au mieux les bitboards. Un bitboard est une structure de données qui est très efficace pour encoder un plateau de jeu tel que celui du Reversi. En effet, s'agissant d'un ensemble de bits, chaque bit peut correspondre à une case du plateau et indiquer la présence ou l'absence d'une pièce, ainsi on doit utiliser deux bitboards, un pour les pions blancs et un autre pour les pions noirs. L'interface utilisateur devant être purement en mode texte dans un bash, on doit plutôt se concentrer sur le développement d'heuristiques propres au jeu. Le projet doit être essentiellement dirigé vers l'utilisation de techniques d'exploration d'arbre classiques telles que Minimax-ab, Negamax, Negascout, MTD(f), Monte-Carlo Tree Search (MCTS), etc. Nous définirons lesquelles développer en premières ultérieurement.\\
+Nous avions le choix entre le langage de programmation C et le C++, nous avons choisi d'utiliser le C++. Notre programme doit appliquer les algorithmes les plus fréquents pour un joueur de Reversi et doit utiliser au mieux les bitboards. Un bitboard est une structure de données qui est très efficace pour encoder un plateau de jeu tel que celui du Reversi. En effet, s'agissant d'un ensemble de bits, chaque bit peut correspondre à une case du plateau et indiquer la présence ou l'absence d'une pièce, ainsi on doit utiliser deux bitboards, un pour les pions blancs et un autre pour les pions noirs. L'interface utilisateur devant être purement en mode texte dans un bash où les pions blanc seront représenté avec des \verb!O! et les pions noir avec des \verb!X!, on doit plutôt se concentrer sur le développement d'heuristiques propres au jeu. Le projet doit être essentiellement dirigé vers l'utilisation de techniques d'exploration d'arbre classiques telles que Minimax-ab, Negamax, Negascout, MTD(f), Monte-Carlo Tree Search (MCTS), etc. Nous définirons lesquelles développer en premières ultérieurement.\\
 
-Le jeu de Reversi est un jeu de stratégie au tour par tour opposant deux joueurs où tous les éléments sont connus et où le hasard n'a pas sa place. Chaque joueur possède des pions qu'il doit disposer sur le plateau, avec la possibilité de capturer les pions adverses, le but étant de terminer avec le plus grand nombre de pions. La partie se termine lorsque plus aucun mouvement n'est possible pour chacun des deux joueurs. La partie commence avec quatre pions, deux par joueur, posés au centre d'un plateau de dimensions 8 par 8 (taille conventionnelle, même s'il existe des variantes avec des plateaux plus petits ou plus grands aux dimensions toujours paires), comme le montre la Fig. \ref{fig:début_du_jeu}.
+Le jeu de Reversi est un jeu de stratégie au tour par tour opposant deux joueurs où tous les éléments sont connus et où le hasard n'a pas sa place. Chaque joueur possède des pions qu'il doit disposer sur le plateau, avec la possibilité de capturer les pions adverses, le but étant de terminer avec le plus grand nombre de pions. La partie commence avec le joueur noir et se termine lorsque plus aucun mouvement n'est possible pour chacun des deux joueurs. La partie commence avec quatre pions, deux par joueur, posés au centre d'un plateau de dimensions 8 par 8 (taille conventionnelle, même s'il existe des variantes avec des plateaux plus petits ou plus grands aux dimensions toujours paires), comme le montre la Fig. \ref{fig:début_du_jeu}.
 
 \begin{figure}[H]    
 \centering
@@ -43,7 +43,7 @@ Le jeu de Reversi est un jeu de stratégie au tour par tour opposant deux joueur
 7 _ _ _ _ _ _ _ _
 8 _ _ _ _ _ _ _ _
 \end{BVerbatim}
-\caption {Initialisation du jeu.\label{fig:début_du_jeu}}
+\caption {Initialisation du jeu. \label{fig:début_du_jeu}}
 \end{figure}
 
 Un joueur peut placer un pion uniquement sur une case vide adjacente à un pion adverse, et si le pion ainsi posé permet la capture d'au moins un pion adverse. Pour capturer les pions adversaires, il faut que ceux-ci se retrouvent pris entre l'un de vos pions déjà présents et celui que vous vous apprêtez à poser sur le plateau. La capture de pions peut s'effectuer dans les huit directions à la fois (voir Fig. \ref{fig:aire_de_capture}).
@@ -74,7 +74,7 @@ Un joueur peut placer un pion uniquement sur une case vide adjacente à un pion 
 \end{figure}
 \tikzstyle{block}=[rectangle, draw, text width=6em, text centered, rounded corners, minimum height=4em]
 
-Aujourd'hui, la machine l'emporte sans problème contre l'homme, les plus grands champions n'ont pu que s'incliner.
+Depuis, qu'un programme a battu le champion du monde d'Othello à 6-0, en 1997\cite{CK06}, on considère que les programmes sont meilleures que les humains pour le jeu d'Othello.
 
 \section{Description et analyse de l'existant}
 
@@ -85,72 +85,100 @@ Pour qu'un programme puisse décider d'un coup à jouer, il lui faut calculer qu
 \begin{figure}[H]    
 \centering
 \begin{tikzpicture}
-\node[block] (a) at (3,5) {\begin{BVerbatim}
-  A B C D E F
-1 _ _ _ _ _ _
-2 _ _ _ _ _ _
-3 _ _ O X _ _
-4 _ _ X O _ _
-5 _ _ _ _ _ _
-6 _ _ _ _ _ _ 
+\node[block, label=left:{Tour noir}] (a) at (3,5) {\begin{BVerbatim}
+  A B C D 
+1 _ _ _ _ 
+2 _ O X _ 
+3 _ X O _
+4 _ _ _ _
+
 \end{BVerbatim}
 };
 
-\node[block] (b) at (-1,0) {\begin{BVerbatim}
-  A B C D E F
-1 _ _ _ _ _ _
-2 _ _ _ _ _ _
-3 _ X X X _ _
-4 _ _ X O _ _
-5 _ _ _ _ _ _
-6 _ _ _ _ _ _ 
+\node[block, label=left:{Tour blanc}] (b) at (-1,0) {\begin{BVerbatim}
+  A B C D 
+1 _ _ _ _ 
+2 X X X _ 
+3 _ X O _
+4 _ _ _ _
+
 \end{BVerbatim}
 };
 
 \node[block] (c) at (2,0) {\begin{BVerbatim}
-  A B C D E F
-1 _ _ _ _ _ _
-2 _ _ X _ _ _
-3 _ _ X X _ _
-4 _ _ X O _ _
-5 _ _ _ _ _ _
-6 _ _ _ _ _ _ 
+  A B C D 
+1 _ X _ _ 
+2 _ X X _ 
+3 _ X O _
+4 _ _ _ _
+
 \end{BVerbatim}
 };
 
 \node[block] (d) at (5,0) {\begin{BVerbatim}
-  A B C D E F
-1 _ _ _ _ _ _
-2 _ _ _ _ _ _
-3 _ _ O X _ _
-4 _ _ X X X _
-5 _ _ _ _ _ _
-6 _ _ _ _ _ _ 
+  A B C D 
+1 _ _ _ _ 
+2 _ O X _ 
+3 _ X X X
+4 _ _ _ _
+
 \end{BVerbatim}
 };
 
 \node[block] (e) at (8,0) {\begin{BVerbatim}
-  A B C D E F
-1 _ _ _ _ _ _
-2 _ _ _ _ _ _
-3 _ _ O X _ _
-4 _ _ X X _ _
-5 _ _ _ X _ _
-6 _ _ _ _ _ _
+  A B C D 
+1 _ _ _ _ 
+2 _ O X _ 
+3 _ X X _
+4 _ _ X _
+
 \end{BVerbatim}
 };
 
-\draw[->] (a) -- node [text width=2em,midway,above] {B3} (b);
-\draw[->] (a) -- node [text width=2em,midway,above] {C2} (c);
-\draw[->] (a) -- node [text width=3em,midway,above] {E4} (d);
-\draw[->] (a) -- node [text width=4em,midway,above] {D5}(e);
+\node[block, label=left:{Tour noir}] (f) at (2,-4) {\begin{BVerbatim}
+  A B C D 
+1 _ _ _ _ 
+2 _ O X _ 
+3 _ O X X
+4 _ O _ _
+
+\end{BVerbatim}
+};
+
+\node[block] (g) at (5,-4) {\begin{BVerbatim}
+  A B C D 
+1 _ _ _ _ 
+2 _ O X _ 
+3 _ X O X
+4 _ _ _ O
+
+\end{BVerbatim}
+};
+
+\node[block] (h) at (8,-4) {\begin{BVerbatim}
+  A B C D 
+1 _ _ _ _ 
+2 _ O O O 
+3 _ X X X
+4 _ _ _ _
+
+\end{BVerbatim}
+};
+
+\draw[->] (a) -- node [text width=2em,midway,above] {A2} (b);
+\draw[->] (a) -- node [text width=2em,midway,above] {B1} (c);
+\draw[->] (a) -- node [text width=3em,midway,above] {D3} (d);
+\draw[->] (a) -- node [text width=4em,midway,above] {C4}(e);
+\draw[->] (d) -- node [text width=2em,midway,above] {B4} (f);
+\draw[->] (d) -- node [text width=3em,midway,above] {D4} (g);
+\draw[->] (d) -- node [text width=4em,midway,above] {D2}(h);
 \end{tikzpicture}
-\caption {Exemple d'arbre.\label{fig:exemple_arbre} }
+\caption {Exemple d'arbre partiel d'état de jeu de profondeur deux.\label{fig:exemple_arbre} }
 \end{figure}
 
-Un programme qui pourrait ainsi prévoir tous les coups possibles pourrait facilement savoir quels coups jouer pour s'assurer la victoire, mais de part le nombre grandissant de coups possibles, il n'est pas envisageable de le faire dans un temps restreint. En effet, plus on descend dans l'arbre, plus l'éventail des possibilités explose. Un plateau plus grand implique aussi plus de possibilités avec une partie plus longue. Il faut donc trouver un moyen d'obtenir de bons résultats sans explorer entièrement l'arbre de recherche des coups possibles.\\
+Un programme qui pourrait ainsi prévoir tous les coups possibles pourrait facilement savoir quels coups jouer pour s'assurer la victoire, mais de part le nombre grandissant de coups possibles, il n'est pas envisageable de le faire dans un temps restreint. En effet, la complexité d'une telle recherche devient exponentielle et est de l'ordre de \begin{math}10^h\end{math}\cite{And07}, où h est la profondeur de l'arbre. Un plateau plus grand implique aussi plus de possibilités avec une partie plus longue. Il faut donc trouver un moyen d'obtenir de bons résultats sans explorer entièrement l'arbre de recherche des coups possibles.\\
 
-La grande majorité des algorithmes utilise la méthode Minimax, ou une de ses variantes, pour trouver le meilleur coup à jouer dans l'arbre de jeu. Minimax est une technique qui part du principe que l'adversaire joue également de manière optimale, ainsi dans l'exploration on va essayer de maximiser nos bons coups tout en minimisant les bons coups adverses. Afin de déterminer les chances de gagner pour le joueur avec un certain coup, Minimax utilise une fonction d'évaluation.\\
+La grande majorité des algorithmes utilise la méthode Minimax, ou une de ses variantes, pour trouver le meilleur coup à jouer dans l'arbre de jeu. Minimax est une technique qui part du principe que l'adversaire joue également de manière optimale, ainsi dans l'exploration on va essayer de maximiser nos bons coups tout en minimisant les bons coups adverses. Afin de déterminer les chances de gagner pour le joueur avec un certain coup, Minimax utilise une fonction d'évaluation, qui attribue à un état de jeu une note représentant a quel point l'état du jeu est intéressant.\\
 
 Cette fonction d'évaluation se base principalement sur deux principes du jeu :\\
 
@@ -167,9 +195,9 @@ Cette fonction d'évaluation se base principalement sur deux principes du jeu :\
 1 X _ _ _ _ X
 2 X _ _ _ _ _
 3 X _ _ _ _ _
-4 X _ _ _ _ _
+4 X _ _ _ _ X
 5 X _ _ _ X X
-6 X _ _ _ X X
+6 X _ _ X X X
 \end{BVerbatim}
 \caption{Exemple de bord stable.\label{fig:bord_stable}}
 \end{figure}
@@ -180,8 +208,8 @@ Cette fonction d'évaluation se base principalement sur deux principes du jeu :\
 \centering
 \begin{BVerbatim}
   A B C D E F
-1 _ O _ O _ _
-2 _ _ O O _ _
+1 _ O _ O O _
+2 _ _ O O O _
 3 _ _ X _ _ _
 4 _ _ _ _ _ _
 5 _ _ _ _ _ _
@@ -193,7 +221,7 @@ Cette fonction d'évaluation se base principalement sur deux principes du jeu :\
 
 \item \textbf{Mobilité}: Avoir un grand choix de coups est assez important étant donné que cela augmente les chances d'avoir de bons coups, tandis qu'avoir un faible nombre de coups entraînera inéluctablement vers de mauvaises décisions, voir pire vers aucune décision possible et dans ce cas la défaite est quasiment assurée. L'idéal est donc d'avoir un grand choix de coups, tout en réduisant le nombre de coups de l'adversaire (et ainsi réduire ses chances de victoire).\\
 
-De plus, faire le dernier coup est assez avantageux puisque cela permet de prendre des pions qui ne seront jamais repris de part la fin de la partie, ainsi il peut être intéressant, si le coup final n'est pas notre, d'essayer de l'obtenir. Naturellement c'est au joueur blanc que revient ce dernier coup, le joueur noir souhaitant obtenir ce dernier coup devra donc faire passer un tour au joueur blanc. Plus généralement, il devra s'assurer qu'il y ait une différence impaire du nombre de tours joués.\\
+De plus, faire le dernier coup est assez avantageux puisque cela permet de prendre des pions qui ne seront jamais repris de part la fin de la partie, ainsi il peut être intéressant, si le coup final n'est pas notre, d'essayer de l'obtenir. Comme le joueur noir commence et qu'il y'a un nombre pair de cases, c'est donc au joueur blanc que revient ce dernier coup, ainsi le joueur noir souhaitant obtenir ce dernier coup devra donc faire passer un tour au joueur blanc.\\
 
 Mais cette notion de dernier coup existe aussi avant la fin de la partie. En effet, vers la fin de la partie, sur le plateau, il apparaît différentes zones où cette technique de dernier pourra également être utilisée. Par exemple, dans la Fig. \ref{fig:mobilité}, le joueur noir a la possibilité d'obtenir un dernier coup local en 'E6', alors que s'il décide de jouer en 'A2', il laisserait la possibilité au joueur blanc de faire un dernier coup local en 'A1'.
 \begin{figure}[H]    
@@ -207,7 +235,7 @@ Mais cette notion de dernier coup existe aussi avant la fin de la partie. En eff
 5 X X X O O O
 6 O O O O _ O
 \end{BVerbatim}
-\caption {Exemple du principe de mobilité.\label{fig:mobilité}}
+\caption {Exemple du principe de mobilité. C'est au joueur noir de jouer\label{fig:mobilité}}
 \end{figure}
 \end{itemize}
 
@@ -219,9 +247,7 @@ La fonction d'évaluation dont hérite Iago a été faite "à la main". En effet
 
 \subsubsection{Bill}
 
-Peu après la création de Iago, le programme Bill\cite{LM86} est lui aussi développé, ce dernier arrive à vaincre Iago à chaque fois. Il est assez similaire à Iago, mais combine en plus les probabilités avec l'utilisation de Minimax, permettant de mieux simuler le comportement humain. Ainsi, un coup légal (correspondant à un coup qui peut être joué) obtient une probabilité de 100\% tandis que les coups illégaux ont une valeur calculée (par exemple, si un coup illégal obtient une probabilité de 82\% cela signifiera que dans 82\% des cas le joueur pourra jouer ce coup). Ensuite, le programme pourra facilement savoir quel coup privilégier afin d'atteindre assurément une case du plateau.\\
-
-Un autre ajout est de bornée la valeur de retour de Minimax ce qui permet d'exclure plus de branches, mais le risque reste que si la borne a été mal choisie la recherche retourne une valeur incorrect. Pour parer à cela, il suffit de regarder si la valeur retournée correspond à une des bornes, ainsi on sera si le résultat se situe en dehors de ces bornes.\\
+Peu après la création de Iago, le programme Bill\cite{LM86} est lui aussi développé, ce dernier arrive à vaincre Iago à chaque fois. Il est assez similaire à Iago, mais borne la valeur de retour de Minimax, ce qui permet d'exclure plus de branches, mais le risque reste que si la borne a été mal choisie la recherche retourne une valeur incorrect. Pour parer à cela, il suffit de regarder si la valeur retournée correspond à une des bornes, ainsi on sait si le résultat se situe en dehors de ces bornes.\\
 
 %% TODO: voir l'utilité de la table de hashage -> c'est juste la structure de données correspondant au mieux au problème (accès rapide), je pense
 Il utilise également une table de hashage pour stocker les meilleurs coups obtenus et profite du temps que son adversaire met à jouer pour la mettre à jour (alors que Iago se contentait d'attendre le coup de l'adversaire).
@@ -230,11 +256,11 @@ Il utilise également une table de hashage pour stocker les meilleurs coups obte
 
 Dans les années 1990, un programme nommé Logistello\cite{Bur95a} est développé. Ce dernier utilise également la technique d'exploration d'arbre Minimax-ab. Ce qui fait sa particularité sont ses extensions et l'amélioration de sa fonction d'évaluation.\\
 
-Une extension nommée ProbCut\cite{Bur95b} vient s'intégrer au programme Logistello et le rend bien plus performant. En comparaison d'un humain se servant de son expérience pour exclure certaines possibilités peu ou pas pertinentes, l'algorithme Minimax-ab cherche dans presque l'intégralité de l'arbre de jeu. L'extension ProbCut permet d'exclure des sous-arbres probablement pas très pertinents de la recherche en profondeur à une certaine hauteur dans l'arbre de jeu, le temps ainsi sauvé est utilisé pour rechercher plus profondémment dans les sous-arbres restants.\\
+Une extension nommée ProbCut\cite{Bur95b} vient s'intégrer au programme Logistello et le rend bien plus performant. En comparaison d'un humain se servant de son expérience pour exclure certaines possibilités peu ou pas pertinentes, l'algorithme Minimax-ab cherche dans presque l'intégralité de l'arbre de jeu. L'extension ProbCut permet d'exclure des sous-arbres probablement pas très pertinents de la recherche en profondeur à une certaine hauteur dans l'arbre de jeu, le temps ainsi sauvé est utilisé pour rechercher plus profondément dans les sous-arbres restants.\\
 
 Une amélioration de cette extension nommée Multi-ProbCut\cite{Bur97a} permettant l'exclusion d'encore plus de sous-arbres rend le programme encore plus performant. Cette amélioration utilise l'algorithme Negamax qui est une variante de Minimax pouvant être plus rapide, l'utilisation de NegaScout peut être une autre amélioration.\\
 
-En 1997, après amélioration de sa fonction d'évaluation, le programme Logistello a joué une série de parties l'opposant à Takeshi Murakami, un champion du monde d'Othello, qui s'est terminée par une victoire écrasante de 6 parties à 0 pour Logistello. Le champion du monde explique que malgré une dernière partie parfaite de sa part, le programme a su sortir des coups juste inimaginables pour un être humain. Un récit de cette incroyable rencontre a été rédigé par Michael Buro en personne\cite{Bur97b}.
+En 1997, après amélioration de sa fonction d'évaluation, le programme Logistello a joué une série de parties l'opposant à Takeshi Murakami, un champion du monde d'Othello, qui s'est terminée par une victoire écrasante de 6 parties à 0 pour Logistello. Le champion du monde explique que malgré une dernière partie parfaite de sa part, le programme a su sortir des coups juste inimaginables pour un être humain. Un récit de cette incroyable rencontre a été rédigé par Michael Buro, le développeur de Logistello, en personne\cite{Bur97b}.
 
 \section{Besoins fonctionnels}
 \label{sec:besoins_fonctionnels}
