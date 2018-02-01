@@ -23,12 +23,12 @@
 \newpage
 
 \section{Introduction}
-
+\label{sec:intro}
 Notre projet consiste en l'élaboration d'un joueur de Reversi complet, développé en suivant certaines règles, afin de pouvoir être confronté à d'autre implémentations au cours d'un tournoi prévu qui le confrontera au programme d'une seconde équipe de développement ayant reçu le même sujet.\\
 
-Nous avions le choix entre le langage de programmation C et le C++, nous avons choisi d'utiliser le C++. Notre programme doit appliquer les algorithmes les plus fréquents pour un joueur de Reversi et doit utiliser au mieux les bitboards. Un bitboard est une structure de données qui est très efficace pour encoder un plateau de jeu tel que celui du Reversi. En effet, s'agissant d'un ensemble de bits, chaque bit peut correspondre à une case du plateau et indiquer la présence ou l'absence d'une pièce, ainsi on doit utiliser deux bitboards, un pour les pions blancs et un autre pour les pions noirs. L'interface utilisateur devant être purement en mode texte dans un bash où les pions blanc seront représenté avec des \verb!O! et les pions noir avec des \verb!X!, on doit plutôt se concentrer sur le développement d'heuristiques propres au jeu. Le projet doit être essentiellement dirigé vers l'utilisation de techniques d'exploration d'arbre classiques telles que Minimax-ab, Negamax, Negascout, MTD(f), Monte-Carlo Tree Search (MCTS), etc. Nous définirons lesquelles développer en premières ultérieurement.\\
+Nous avions le choix entre le langage de programmation C et le C++, nous avons choisi d'utiliser le C++. Notre programme doit appliquer les algorithmes les plus fréquents pour un joueur de Reversi et doit utiliser au mieux les bitboards. Un bitboard est une structure de données qui est très efficace pour encoder un plateau de jeu tel que celui du Reversi. En effet, s'agissant d'un ensemble de bits, chaque bit peut correspondre à une case du plateau et indiquer la présence ou l'absence d'une pièce, ainsi on doit utiliser deux bitboards, un pour les pions blancs et un autre pour les pions noirs. L'interface utilisateur devant être purement en mode texte dans un bash, où les pions blanc seront représenté avec des \verb!O! et les pions noir avec des \verb!X!, on doit plutôt se concentrer sur le développement d'heuristiques propres au jeu. Le projet doit être essentiellement dirigé vers l'utilisation de techniques d'exploration d'arbre classiques telles que Minimax-$\alpha\beta$, Negamax, Negascout, MTD(f), Monte-Carlo Tree Search (MCTS), etc. Nous définirons lesquelles développer en premières ultérieurement.\\
 
-Le jeu de Reversi est un jeu de stratégie au tour par tour opposant deux joueurs où tous les éléments sont connus et où le hasard n'a pas sa place. Chaque joueur possède des pions qu'il doit disposer sur le plateau, avec la possibilité de capturer les pions adverses, le but étant de terminer avec le plus grand nombre de pions. La partie commence avec le joueur noir et se termine lorsque plus aucun mouvement n'est possible pour chacun des deux joueurs. La partie commence avec quatre pions, deux par joueur, posés au centre d'un plateau de dimensions 8 par 8 (taille conventionnelle, même s'il existe des variantes avec des plateaux plus petits ou plus grands aux dimensions toujours paires), comme le montre la Fig. \ref{fig:début_du_jeu}.
+Le jeu de Reversi est un jeu de stratégie au tour par tour opposant deux joueurs où tous les éléments sont connus et où le hasard n'a pas sa place. Chaque joueur possède des pions qu'il doit disposer sur le plateau, avec la possibilité de capturer les pions adverses, le but étant de terminer avec le plus grand nombre de pions. La partie commence avec le joueur noir et se termine lorsque plus aucun mouvement n'est possible pour chacun des deux joueurs. Le plateau de jeu est initialisé avec quatre pions, deux par joueur, posés au centre, comme le montre la Fig. \ref{fig:début_du_jeu}. Par défaut, la taille du plateau est de huit par huit, mais il est possible de jouer avec un tableau de taille plus grande ou plus petite, tant que la largeur du plateau est égale a sa longueur.
 
 \begin{figure}[H]    
 \centering
@@ -43,9 +43,9 @@ Le jeu de Reversi est un jeu de stratégie au tour par tour opposant deux joueur
 7 _ _ _ _ _ _ _ _
 8 _ _ _ _ _ _ _ _
 \end{BVerbatim}
-\caption {Initialisation du jeu. \label{fig:début_du_jeu}}
+\caption {Initialisation du jeu avec un plateau de huit par huit. \label{fig:début_du_jeu}}
 \end{figure}
-
+\newpage
 Un joueur peut placer un pion uniquement sur une case vide adjacente à un pion adverse, et si le pion ainsi posé permet la capture d'au moins un pion adverse. Pour capturer les pions adversaires, il faut que ceux-ci se retrouvent pris entre l'un de vos pions déjà présents et celui que vous vous apprêtez à poser sur le plateau. La capture de pions peut s'effectuer dans les huit directions à la fois (voir Fig. \ref{fig:aire_de_capture}).
 
 \begin{figure}[H]    
@@ -79,8 +79,8 @@ Depuis, qu'un programme a battu le champion du monde d'Othello à 6-0, en 1997\c
 \section{Description et analyse de l'existant}
 
 \subsection{Programmes}
-
-Pour qu'un programme puisse décider d'un coup à jouer, il lui faut calculer quelles peuvent être les réponses de son adversaire et ainsi se projeter quelques coups dans l'avenir. On stocke ces informations dans un arbre où les noeuds correspondent à un état du jeu et les arcs à des coups joués (voir Fig. \ref{fig:exemple_arbre}).
+\label{sec:programmes}
+Pour qu'un programme puisse décider d'un coup à jouer, il lui faut calculer quelles peuvent être les réponses de son adversaire et ainsi se projeter quelques coups dans l'avenir. On stocke ces informations dans un arbre où les noeuds correspondent à un état du jeu et les arcs à des coups joués (voir Fig. \ref{fig:exemple_arbre}).\\
 
 \begin{figure}[H]    
 \centering
@@ -241,7 +241,7 @@ Mais cette notion de dernier coup existe aussi avant la fin de la partie. En eff
 
 \subsubsection {Iago}
 
-Dans les années 1980, un programme nommé Iago\cite{Ros81} est développé. Ce dernier optimise la recherche du prochain coup en limitant la recherche à un certain nombre de coups dans le futur, nombre déterminé par le temps alloué pour ledit coup. Il utilise également la technique d'exploration d'arbre Minimax-ab. Minimax-ab est une amélioration de Minimax permettant de réduire le nombre de noeuds. En effet, certains sous-arbres dont l'on peut déjà savoir qu'il ne nous mènerons pas vers un meilleurs résultat que les sous-arbres déjà explorés ne seront pas considérés. Ainsi l'ordre dans lequel les branches sont évaluées devient important, Iago organise donc ses noeuds dans l'ordre croissant pour chaque recherche.\\
+Dans les années 1980, un programme nommé Iago\cite{Ros81} est développé. Ce dernier optimise la recherche du prochain coup en limitant la recherche à un certain nombre de coups dans le futur, nombre déterminé par le temps alloué pour ledit coup. Il utilise également la technique d'exploration d'arbre Minimax-$\alpha\beta$. Minimax-$\alpha\beta$ est une amélioration de Minimax permettant de réduire le nombre de noeuds. En effet, certains sous-arbres dont l'on peut déjà savoir qu'il ne nous mènerons pas vers un meilleurs résultat que les sous-arbres déjà explorés ne seront pas considérés. Ainsi l'ordre dans lequel les branches sont évaluées devient important, Iago organise donc ses noeuds dans l'ordre croissant pour chaque recherche.\\
 
 La fonction d'évaluation dont hérite Iago a été faite "à la main". En effet, ils ont testé plusieurs variations, basées sur les principes vus précédemment, en les faisant s'affronter les unes contre les autres et ont gardé la meilleure.
 
@@ -254,14 +254,16 @@ Il utilise également une table de hashage pour stocker les meilleurs coups obte
 
 \subsubsection{Logistello}
 
-Dans les années 1990, un programme nommé Logistello\cite{Bur95a} est développé. Ce dernier utilise également la technique d'exploration d'arbre Minimax-ab. Ce qui fait sa particularité sont ses extensions et l'amélioration de sa fonction d'évaluation.\\
+Dans les années 1990, un programme nommé Logistello\cite{Bur95a} est développé. Ce dernier utilise également la technique d'exploration d'arbre Minimax-$\alpha\beta$. Ce qui fait sa particularité sont ses extensions et l'amélioration de sa fonction d'évaluation.\\
 
-Une extension nommée ProbCut\cite{Bur95b} vient s'intégrer au programme Logistello et le rend bien plus performant. En comparaison d'un humain se servant de son expérience pour exclure certaines possibilités peu ou pas pertinentes, l'algorithme Minimax-ab cherche dans presque l'intégralité de l'arbre de jeu. L'extension ProbCut permet d'exclure des sous-arbres probablement pas très pertinents de la recherche en profondeur à une certaine hauteur dans l'arbre de jeu, le temps ainsi sauvé est utilisé pour rechercher plus profondément dans les sous-arbres restants.\\
+Une extension nommée ProbCut\cite{Bur95b} vient s'intégrer au programme Logistello et le rend bien plus performant. En comparaison d'un humain se servant de son expérience pour exclure certaines possibilités peu ou pas pertinentes, l'algorithme Minimax-$\alpha\beta$ cherche dans presque l'intégralité de l'arbre de jeu. L'extension ProbCut permet d'exclure des sous-arbres probablement pas très pertinents de la recherche en profondeur à une certaine hauteur dans l'arbre de jeu, le temps ainsi sauvé est utilisé pour rechercher plus profondément dans les sous-arbres restants.\\
 
 Une amélioration de cette extension nommée Multi-ProbCut\cite{Bur97a} permettant l'exclusion d'encore plus de sous-arbres rend le programme encore plus performant. Cette amélioration utilise l'algorithme Negamax qui est une variante de Minimax pouvant être plus rapide, l'utilisation de NegaScout peut être une autre amélioration.\\
 
 En 1997, après amélioration de sa fonction d'évaluation, le programme Logistello a joué une série de parties l'opposant à Takeshi Murakami, un champion du monde d'Othello, qui s'est terminée par une victoire écrasante de 6 parties à 0 pour Logistello. Le champion du monde explique que malgré une dernière partie parfaite de sa part, le programme a su sortir des coups juste inimaginables pour un être humain. Un récit de cette incroyable rencontre a été rédigé par Michael Buro, le développeur de Logistello, en personne\cite{Bur97b}.
 
+
+\newpage
 \section{Besoins fonctionnels}
 \label{sec:besoins_fonctionnels}
 
@@ -334,14 +336,14 @@ Si le fichier de sauvegarde passé en paramètre n'existe pas ou n'est pas au bo
 \subsection{Liste des fonctionnalités}
 \label{sec:fonctionnalités}
 
-La fonction \verb!check_is_valid_()! va vérifier si l'entrée de l'utilisateur correspond à un coup légal, c'est à dire un coup dans les bornes du plateau, et conformes aux règles du \verb!Reversi! (Voir section \ref{seq:intro}). Si le joueur choisi un coup illégal, le programme demande alors à l'utilisateur de re-saisir un coup.\\
-
+La fonction \verb!check_is_valid_()! va vérifier si l'entrée de l'utilisateur correspond à un coup légal, c'est à dire un coup dans les bornes du plateau, et conformes aux règles du \verb!Reversi! (Voir section \ref{sec:intro}). Si le joueur choisi un coup illégal, le programme demande alors à l'utilisateur de re-saisir un coup.\\
 % Début nouvelle partie post TD1
 \begin{itemize}
+\item Le programme se présente sous la forme d'une executable pouvant se lancer via un bash par la ligne de commande \verb!./reversi!. Cette ligne de commande peut s'accompagner d'options modifiant le comportement du programme, que nous détaillerons dans la suite de cette liste.
 \item L'entrée de l'utilisateur est insensible à la casse.
 \item Lorsque le jeu est lancé, l'affichage du plateau est accompagné des règles du jeu ainsi qu'une explication rapide des commandes dont l'utilisateur dispose pour sélectionner un mouvement.
-\item Le programme questionne l'utilisateur sur le choix de son prochain mouvement. L'entrée de l'utilisateur est alors une chaîne de caractères commençant par un numéro représentant l'ordonnée de la case et se terminant par une lettre correspondant à l'abscisse de cette même case. Dans l'exemple de la figure \ref{fig:exemple_board}, la chaîne de caractères \verb!2C! correspond à un coup légal.
-\item Lorsque l'utilisateur entre une coordonnée étant hors du plateau, étant déjà occupée par un pion, ou n'étant pas un coup possible selon les règles du \verb!Reversi!, le programme signal alors que l'entrée est erronée, puis re demmande à l'utilisateur de choisir un mouvement. Le cas où l'utilisateur rentre des données totalement non conformes à ces règles est aussi prit en compte.
+\item Le programme questionne l'utilisateur sur le choix de son prochain mouvement. L'entrée de l'utilisateur est alors une chaîne de caractères commençant par un numéro représentant l'ordonnée de la case et se terminant par une lettre correspondant à l'abscisse de cette même case. Dans l'exemple de la figure \ref{fig:exemple_board}, la chaine de caractères \verb!2C! correspond à un coup légal.
+\item Lorsque l'utilisateur entre une coordonnée étant hors du plateau, étant déjà occupée par un pion, ou n'étant pas un coup possible selon les règles du \verb!Reversi!, le programme signal alors que l'entrée est erronée, puis re-demmande à l'utilisateur de choisir un mouvement. Le cas où l'utilisateur rentre des données totalement non conformes à ces règles est aussi prit en compte.
 \item Le programme peut être quitté à tout moment lorsque l'utilisateur saisi la lettre\verb!'q'! à la place de coordonnées valides.
 \item Si l'utilisateur le souhaite, le programme peut sauvegarder l'état de la partie actuelle dans un fichier \verb!ASCII!. La sauvegarde présente sur sa première ligne le caractère correspondant au prochain joueur qui devait jouer au moment ou la partie est interrompue. Les lignes en dessous présentent alors l'état de la partie avec le positionnement des pions des deux joueurs (voir fig. \ref{fig:exemple_save}).
 \item Un fichier de sauvegarde conformes au règles citées ci-dessus peut être utilisé pour charger une partie plutôt que d'en commencer une nouvelle, lors du lancement du programme.  Lancer le programme avec un fichier de sauvegarde valide passé en paramètre permet de charger une partie correspondant à la sauvegarde décrite par le fichier.
@@ -381,12 +383,13 @@ _ _ _ _ _ _
 \item [-b, --black] Pour indiquer que l'IA jouera les pions noirs.
 \item [-a, --all] Pour indiquer que l'IA jouera les deux camps.
 \end{description}
-\item L'utilisateur peut décider de jouer une partie contre un autre joueur lorsqu'il ne précise pas de rôle pour l'intelligence artificielle. Lorsqu'il décide de faire ainsi, l'entrée correspond aux pions blancs et noirs chacun leur tour.
+\item L'utilisateur peut décider de jouer une partie contre un autre joueur lorsqu'il ne précise pas de rôle pour l'intelligence artificielle. Lorsqu'il décide de faire ainsi, chaque joueur décident, à leur tour, de leur mouvement en précisant les coordonnées voulues.
 \item Le programme dispose alors de plusieurs intelligences artificielles différentes, ce qui permet de les faires jouer entre elle afin de déterminer la quelle d'entre elles est la plus performante. 
 \item La version du programme est affichable avec l'option de lancement \verb!-V! ou \verb!--version!. 
 \item Le mode verbeux est activable au lancement du programme avec l'option \verb!-v! ou \verb!--verbose!.
 \item Une aide est disponible pour l'utilisateur grâce à l'option \verb!-h! ou \verb!--help!, elle liste l'ensemble des options du programme ainsi que leur description.
-\item Le programme dispose d'une structure d'arbre de coups possibles tel que décrit par la figure \ref{fig:exemple_arbre}. Cette structure permettant de choisir le coup optimal en se basant sur une prédiction des coups futurs. L'intelligence articficielle est cappable d'extraires des données  
+\item Le programme dispose d'une structure d'arbre de coups possibles tel que décrit par la figure \ref{fig:exemple_arbre}. Cette structure permettant de choisir le coup optimal en se basant sur une prédiction des coups futurs. L'intelligence parcours cet arbre pour extraire la configuration du jeu optimale.
+\item L'intelligence artificielle dispose d'une fonction d'évaluation telle que décrite dans la section \ref{sec:programmes}. Cette fonction est capable de détecter la stabilité d'une case (voir sous-section \ref{sec:programmes}). Elle est aussi en mesure de détecter la mobilité associée à une case (voir sous-section \ref{sec:programmes}).
 \end{itemize}
 % Fin nouvelle partie post TD1.
 
@@ -539,15 +542,20 @@ _ _ _ _ _ _
 \end{figure}
 
 \section{Besoins non fonctionnels}
-\label{seq:besoins_non_fonctionnels}
+\label{sec:besoins_non_fonctionnels}
 \begin{itemize} 
 \item Rapidité d'exécution : chaque coup doit être exécuté en moins d'une seconde.
 \item Portabilité : le programme doit pouvoir s'exécuter sur toute machine de type Linux.
 \end{itemize}
 
 \section{Tests}
-\label{seq:tests}
+\label{sec:tests}
 
+\begin{description}
+\item [Sauvegarde et chargement :] La sauvegarde et le chargement d'une partie est testée en vérifiant qu'après la sauvegarde d'une partie, le fichier \verb!ASCII! généré est bien conforme aux conventions précédemment citées (voir section \ref{sec:fonctionnalités}). Par la suite, nous vérifions qu'après le chargement de ce même fichier, la partie possède un plateau de jeu identique à la partie sauvegardée et que le tour du joueur est correct.
+\item [Rapidité de l'IA :] La fonction permettant à l'IA d'effectuer un mouvement est soumise à un timeout de une seconde pour assurer que l'IA respecte la contrainte de temps imposée.
+\item [Non-régression d'une IA :] Pour s'assurer de la non régression d'une IA, nous ferons s'affronter plusieurs de nos IA entre elles en gradant une trace des performances de chacunes.
+\end{description}
 
 
 \section{Gantt}
