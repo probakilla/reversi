@@ -553,7 +553,7 @@ _ _ _ _ _ _
 \begin{description}
 \item [Sauvegarde et chargement :] La sauvegarde et le chargement d'une partie est testée en vérifiant qu'après la sauvegarde d'une partie, le fichier \verb!ASCII! généré est bien conforme aux conventions précédemment citées (voir section \ref{sec:fonctionnalités}). Par la suite, nous vérifions qu'après le chargement de ce même fichier, la partie possède un plateau de jeu identique à la partie sauvegardée et que le tour du joueur est correct.
 \item [Rapidité de l'IA :] La fonction permettant à l'IA d'effectuer un mouvement est soumise à un timeout de une seconde pour assurer que l'IA respecte la contrainte de temps imposée.
-\item [Non-régression d'une IA :] Pour s'assurer de la non régression d'une IA, nous ferons s'affronter plusieurs de nos IA entre elles en gardant une trace des performances de chacune.
+\item [Non-régression d'une IA :] Pour s'assurer de la non régression d'une IA, nous affronterons l'IA a son ancienne version.
 \end{description}
 
 
