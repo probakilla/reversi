@@ -221,7 +221,7 @@ Cette fonction d'évaluation se base principalement sur deux principes du jeu :\
 
 \item \textbf{Mobilité}: Avoir un grand choix de coups est assez important étant donné que cela augmente les chances d'avoir de bons coups, tandis qu'avoir un faible nombre de coups entraînera inéluctablement vers de mauvaises décisions, voir pire vers aucune décision possible et dans ce cas la défaite est quasiment assurée. L'idéal est donc d'avoir un grand choix de coups, tout en réduisant le nombre de coups de l'adversaire (et ainsi réduire ses chances de victoire).\\
 
-De plus, faire le dernier coup est assez avantageux puisque cela permet de prendre des pions qui ne seront jamais repris de part la fin de la partie, ainsi il peut être intéressant, si le coup final n'est pas notre, d'essayer de l'obtenir. Comme le joueur noir commence et qu'il y'a un nombre pair de cases, c'est donc au joueur blanc que revient ce dernier coup, ainsi le joueur noir souhaitant obtenir ce dernier coup devra donc faire passer un tour au joueur blanc.\\
+De plus, faire le dernier coup est assez avantageux puisque cela permet de prendre des pions qui ne seront jamais repris de part la fin de la partie, ainsi il peut être intéressant, si le coup final n'est pas notre, d'essayer de l'obtenir. Comme le joueur noir commence et qu'il y a un nombre pair de cases, c'est donc au joueur blanc que revient ce dernier coup, ainsi le joueur noir souhaitant obtenir ce dernier coup devra donc faire passer un tour au joueur blanc.\\
 
 Mais cette notion de dernier coup existe aussi avant la fin de la partie. En effet, vers la fin de la partie, sur le plateau, il apparaît différentes zones où cette technique de dernier pourra également être utilisée. Par exemple, dans la Fig. \ref{fig:mobilité}, le joueur noir a la possibilité d'obtenir un dernier coup local en 'E6', alors que s'il décide de jouer en 'A2', il laisserait la possibilité au joueur blanc de faire un dernier coup local en 'A1'.
 \begin{figure}[H]    
@@ -334,16 +334,16 @@ Si le fichier de sauvegarde passé en paramètre n'existe pas ou n'est pas au bo
 \subsection{Liste des fonctionnalités}
 \label{sec:fonctionnalités}
 
-La fonction \verb!check_is_valid_()! va vérifier si l'entrée de l'utilisateur correspond à un coup légal, c'est à dire un coup dans les bornes du plateau, et conformes aux règles du \verb!Reversi! (Voir section \ref{seq:intro}). Si le joueur choisi un coup illégal, le programme demande alors à l'utilisteur de re-saisir un coup.\\
+La fonction \verb!check_is_valid_()! va vérifier si l'entrée de l'utilisateur correspond à un coup légal, c'est à dire un coup dans les bornes du plateau, et conformes aux règles du \verb!Reversi! (Voir section \ref{seq:intro}). Si le joueur choisi un coup illégal, le programme demande alors à l'utilisateur de re-saisir un coup.\\
 
 % Début nouvelle partie post TD1
 \begin{itemize}
 \item L'entrée de l'utilisateur est insensible à la casse.
 \item Lorsque le jeu est lancé, l'affichage du plateau est accompagné des règles du jeu ainsi qu'une explication rapide des commandes dont l'utilisateur dispose pour sélectionner un mouvement.
-\item Le programme questionne l'utilisateur sur le choix de son prochain mouvement. L'entrée de l'utilisateur est alors une chaîne de caractères commençant par un numéro représentant l'ordonnée de la case et se terminant par une lettre correspondant à l'abscisse de cette même case. Dans l'exemple de la figure \ref{fig:exemple_board}, la chaine de caractères \verb!2C! correspond à un coup légal.
-\item Lorsque l'utilisateur entre une coordonnée étant hors du plateau, étant déjà occupée par un pion, ou n'étant pas un coup possible selon les règles du \verb!Reversi!, le programme signal alors que l'entrée est erronée, puis re-demmande à l'utilisateur de choisir un mouvement. Le cas où l'utilisateur rentre des données totalements non conformes à ces règles est aussi prit en compte.
+\item Le programme questionne l'utilisateur sur le choix de son prochain mouvement. L'entrée de l'utilisateur est alors une chaîne de caractères commençant par un numéro représentant l'ordonnée de la case et se terminant par une lettre correspondant à l'abscisse de cette même case. Dans l'exemple de la figure \ref{fig:exemple_board}, la chaîne de caractères \verb!2C! correspond à un coup légal.
+\item Lorsque l'utilisateur entre une coordonnée étant hors du plateau, étant déjà occupée par un pion, ou n'étant pas un coup possible selon les règles du \verb!Reversi!, le programme signal alors que l'entrée est erronée, puis re demmande à l'utilisateur de choisir un mouvement. Le cas où l'utilisateur rentre des données totalement non conformes à ces règles est aussi prit en compte.
 \item Le programme peut être quitté à tout moment lorsque l'utilisateur saisi la lettre\verb!'q'! à la place de coordonnées valides.
-\item Si l'utilisateur le souhaite, le programme peut sauvegarder l'état de la partie actuelle dans un fichier \verb!ASCII!. La sauvegarde présente sur sa prmière ligne le caractère correspondant au prochain joueur qui devait jouer au moment ou la partie est interrompue. Les lignes en dessous présentent alors l'état de la partie avec le positionnement des pions des deux joueurs (voir fig. \ref{fig:exemple_save}).
+\item Si l'utilisateur le souhaite, le programme peut sauvegarder l'état de la partie actuelle dans un fichier \verb!ASCII!. La sauvegarde présente sur sa première ligne le caractère correspondant au prochain joueur qui devait jouer au moment ou la partie est interrompue. Les lignes en dessous présentent alors l'état de la partie avec le positionnement des pions des deux joueurs (voir fig. \ref{fig:exemple_save}).
 \item Un fichier de sauvegarde conformes au règles citées ci-dessus peut être utilisé pour charger une partie plutôt que d'en commencer une nouvelle, lors du lancement du programme.  Lancer le programme avec un fichier de sauvegarde valide passé en paramètre permet de charger une partie correspondant à la sauvegarde décrite par le fichier.
 \begin{figure}[H]    
 \centering
@@ -360,7 +360,7 @@ _ _ _ _ _ _
 \end{figure}
 
 \item Le programme contient un mode compétition. Au lancement, l'option \verb!-c! ou \verb!--contest! suivit d'un fichier de sauvegarde. Le coup suivant calculé pour l'état de jeu passé en paramètre est affiché.
-\item La taille du plateau de jeu doit être modifiable. Au lancement, l'option \verb!-s! ou \verb!--size! suivit d'une valeur entre 1 et 5 faisant varier la taille du plateau de 2 à 10 cases (voir Fig. \ref{fig:exemple_taille}). Par défaut, la grille affichée sera de dimensions
+\item La taille du plateau de jeu doit être modifiable. Au lancement, l'option \verb!-s! ou \verb!--size!, suivit d'une valeur entre 1 et 5, fait varier la taille du plateau de 2 à 10 cases (voir Fig. \ref{fig:exemple_taille}). Par défaut, la grille affichée sera de dimensions
 \verb!8x8!.
 
 \begin{figure}[H]    
@@ -386,7 +386,7 @@ _ _ _ _ _ _
 \item La version du programme est affichable avec l'option de lancement \verb!-V! ou \verb!--version!. 
 \item Le mode verbeux est activable au lancement du programme avec l'option \verb!-v! ou \verb!--verbose!.
 \item Une aide est disponible pour l'utilisateur grâce à l'option \verb!-h! ou \verb!--help!, elle liste l'ensemble des options du programme ainsi que leur description.
-\item Le programme dispose d'une structure d'arbre de coups possibles tel que décrit par la figure \ref{fig:exemple_arbre}. Cette structure permettant de choisir le coup optimal en se basant sur une prédiction des coups futurs.
+\item Le programme dispose d'une structure d'arbre de coups possibles tel que décrit par la figure \ref{fig:exemple_arbre}. Cette structure permettant de choisir le coup optimal en se basant sur une prédiction des coups futurs. L'intelligence articficielle est cappable d'extraires des données  
 \end{itemize}
 % Fin nouvelle partie post TD1.
 
@@ -539,11 +539,16 @@ _ _ _ _ _ _
 \end{figure}
 
 \section{Besoins non fonctionnels}
-
+\label{seq:besoins_non_fonctionnels}
 \begin{itemize} 
 \item Rapidité d'exécution : chaque coup doit être exécuté en moins d'une seconde.
 \item Portabilité : le programme doit pouvoir s'exécuter sur toute machine de type Linux.
 \end{itemize}
+
+\section{Tests}
+\label{seq:tests}
+
+
 
 \section{Gantt}
 
