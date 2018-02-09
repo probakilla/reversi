@@ -17,20 +17,21 @@ namespace reversi
   // initialization is temporary
   board::board () : _black_turn (DEFAULT_INIT_TURN), _board_size (DEFAULT_SIZE)
   {
-    // Place the 4th initial discs.
-    place_disc (_board_size/2, _board_size/2, WHITE_TURN);           
-    place_disc (_board_size/2 + 1, _board_size/2 + 1, WHITE_TURN);   
-    place_disc (_board_size/2 + 1, _board_size/2, BLACK_TURN);      
-    place_disc (_board_size/2, _board_size/2 + 1, BLACK_TURN);      
+    // Place the 4th initial discs.              
+    place_disc (_board_size/2 + 1, _board_size/2);    // First black disc
+    place_disc (_board_size/2, _board_size/2);        // First white disc
+    place_disc (_board_size/2, _board_size/2 + 1);    // Second black disc
+    place_disc (_board_size/2 + 1, _board_size/2 + 1);// Second white disc
   }
 
   board::~board () {}
 
-  void board::place_disc (int x, int y, bool black)
-  {
-    __int128 coordinates ((x - 1) * _board_size + (y - 1)); // Number of the bit we want to change in the bitboard.
-    (black)? _black_bitboard |= (DISC << coordinates) :     // Change the black bitboard if the var black is true.
-      _white_bitboard |= (DISC << coordinates);             // Change the white bitboard if the var white is false.
+  void board::place_disc (int x, int y)
+  { 
+    __int128 coordinates ((x - 1) * _board_size + (y - 1));       // Number of the bit we want to change in the bitboard.
+    (_black_turn)? _black_bitboard |= (DISC << coordinates) :     // Change the black bitboard if the var black is true.
+      _white_bitboard |= (DISC << coordinates);                   // Change the white bitboard if the var white is false.
+    _black_turn = !_black_turn;                                   // Switch turn  
   }
 
   void board::display ()
@@ -59,4 +60,9 @@ namespace reversi
       }
     cout << endl;
   }
+
+  int board::end_game ()
+  {
+  }
+  
 }

@@ -17,13 +17,17 @@ namespace reversi
     void display ();
 
     /**
-     * Place a disc in the bitboard with this coordinates.
-     * If the var black is true, the bitboard used is the bitboard of
-     * the black player, otherwise the white one. 
+     * Place a disc in the bitboard with this coordinates. 
      * / ! \ coordinates are supposed to be verrified by the player, eg by a method 'play move' / ! \
      * (maybe just for now)
      */
-    void place_disc (int x, int y, bool black);
+    void place_disc (int x, int y);
+
+    /**
+     * Used to know the winner of the game.
+     * Return 1 if black won, 0 if white won and -1 if there is a tie.
+    */
+    int end_game ();
     
   private: 
     // Size of the board (between 2 & 10).
