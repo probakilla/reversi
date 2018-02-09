@@ -27,15 +27,21 @@ namespace reversi
 
   board::~board () {}
 
+  void board::switch_turn ()
+  {
+    _black_turn = !_black_turn;
+  }
+  
   void board::place_disc (int x, int y)
   { 
     __int128 coordinates ((x - 1) * _board_size + (y - 1));       // Number of the bit we want to change in the bitboard.
-    (_black_turn)? _black_bitboard |= (DISC << coordinates) :     // Change the black bitboard if the var black is true.
-      _white_bitboard |= (DISC << coordinates);                   // Change the white bitboard if the var white is false.
-    _black_turn = !_black_turn;                                   // Switch turn  
+    (_black_turn)? _black_bitboard |= (DISC << (__int128)coordinates) :     // Change the black bitboard if the var black is true.
+      _white_bitboard |= (DISC << (__int128)coordinates);                   // Change the white bitboard if the var white is false.
+    switch_turn ();
   }
 
-
+  
+  
   // Fonction a factoriser
   bool board::flip_discs (int coordinates, int dir)
   {
@@ -57,9 +63,7 @@ namespace reversi
 
     //Placement of the disc on the copy
      bitboard_wining_discs |= (DISC << coordinates);
-     bitboard_wining_discs |= (DISC << coordinates);
      
-
     switch (dir) {
     case north :
       while (coordinates < (nb_cases - _board_size))// Test if the given direction is in the board
@@ -373,7 +377,15 @@ namespace reversi
     cout << endl;
   }
 
-  
+  bool board::move (int x, int y)
+  {
+    int coordinates ((x - 1) * _board_size + (y - 1));
+    bool flipped = false;
+    for (int i = board::north; i != board::end_enum; i++)
+      if (flip_discs (coordinates, i))
+	flipped = true;
+    return flipped;
+  }
 
   int board::end_game ()
   {

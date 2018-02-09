@@ -24,18 +24,17 @@ namespace reversi
     void display ();
 
     /**
-     * Place a disc in the bitboard with this coordinates. 
-     * / ! \ coordinates are supposed to be verrified by the player, eg by a method 'play move' / ! \
-     * (maybe just for now)
-     */
-    void place_disc (int x, int y);
-
-    /**
      * Flip discs in the indicate dir.
      * If no discs where flipped, return false.
      */
     bool flip_discs (int coordinates, int dir);
 
+    /**
+     * If the move is legal, place, flip discs and return true.
+     * Otherwise, do nothing and return false.
+     */
+    bool move (int x, int y);
+    
     /**
      * Used to know the winner of the game.
      * Return 1 if black won, 0 if white won and -1 if there is a tie.
@@ -49,6 +48,15 @@ namespace reversi
     
     // One bitboard for each player (black & white) the game is initialized with the classic four discs in the center.
     __int128 _black_bitboard, _white_bitboard;
+
+    // Switch the current player
+    void switch_turn ();
+
+        /**
+     * Place a disc in the bitboard with this coordinates. 
+     * / ! \ coordinates are supposed to be verrified by the player, just used by the constructor
+     */
+    void place_disc (int x, int y);
   };
 }
 
