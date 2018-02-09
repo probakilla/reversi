@@ -10,6 +10,13 @@ namespace reversi
     board (/*int size*/); /* ==== PROTOTYPE ==== */ // size will be a parameter in final version
     virtual ~board ();
 
+    //Whereas black win the game at the end or if he lose eg white wins, or if there is a tie. 
+    enum Black_End_State {black_win, black_lose, tie};
+
+    // The 8 directions to look for flip discs when we do a llegal move
+    enum Direction {north, north_east, east, south_east, south, south_west, west, north_west, end_enum};
+    
+  /* ==== PROTOTYPE
     /**
      * Display in the terminal the board.
      * Bitboards are supposed to be correct here.
@@ -22,6 +29,12 @@ namespace reversi
      * (maybe just for now)
      */
     void place_disc (int x, int y);
+
+    /**
+     * Flip discs in the indicate dir.
+     * If no discs where flipped, return false.
+     */
+    bool flip_discs (int coordinates, int dir);
 
     /**
      * Used to know the winner of the game.

@@ -13,6 +13,7 @@ const bool WHITE_TURN = false;
 namespace reversi
 {
   using namespace std;
+  
   /* ==== PROTOTYPE ==== */
   // initialization is temporary
   board::board () : _black_turn (DEFAULT_INIT_TURN), _board_size (DEFAULT_SIZE)
@@ -34,6 +35,317 @@ namespace reversi
     _black_turn = !_black_turn;                                   // Switch turn  
   }
 
+
+  // Fonction a factoriser
+  bool board::flip_discs (int coordinates, int dir)
+  {
+    int nb_discs_flipped = 0, nb_cases = pow(_board_size, 2);
+    
+    __int128 bitboard_losing_discs, bitboard_wining_discs;
+
+    //We used a copy of the bitboards
+    if (_black_turn)
+      {
+	bitboard_losing_discs = _white_bitboard;
+	bitboard_wining_discs = _black_bitboard;
+      }
+    else
+      {
+	bitboard_losing_discs = _black_bitboard;
+	bitboard_wining_discs = _white_bitboard;
+      }
+
+    //Placement of the disc on the copy
+     bitboard_wining_discs |= (DISC << coordinates);
+     bitboard_wining_discs |= (DISC << coordinates);
+     
+
+    switch (dir) {
+    case north :
+      while (coordinates < (nb_cases - _board_size))// Test if the given direction is in the board
+	{
+	  coordinates += _board_size;
+	  // Check if we flip at least one disc
+	  if ((bitboard_wining_discs >> (coordinates) & 1ULL) == 1)
+	    if (nb_discs_flipped == 0)
+	      return false;
+	    else
+	      {
+		//Move llegal so real bitboards become the copied. 
+		if (_black_turn)
+		  {
+		    _white_bitboard = bitboard_losing_discs;
+		    _black_bitboard = bitboard_wining_discs;
+		  }
+		else
+		  {
+		    _black_bitboard  = bitboard_losing_discs;
+		    _white_bitboard = bitboard_wining_discs;
+		  }
+		return true;
+	      }
+
+	  // There isn't a white disc so we can't flip
+	  if ((bitboard_losing_discs >> (coordinates) & 1ULL) == 0)
+	    return false;
+
+	  ++nb_discs_flipped;
+	  bitboard_losing_discs &= ~(DISC << coordinates);// Remove the disc
+	  bitboard_wining_discs |= (DISC << coordinates); // Add the disc  
+	}
+      return false;
+      break;
+      
+    case south :
+      while (coordinates > (_board_size - 1))// Test if the given direction is in the board
+	{
+	  coordinates -= _board_size;
+	  // Check if we flip at least one disc
+	  if ((bitboard_wining_discs >> (coordinates) & 1ULL) == 1)
+	    if (nb_discs_flipped == 0)
+	      return false;
+	    else
+	      {
+		//Move llegal so real bitboards become the copied. 
+		if (_black_turn)
+		  {
+		    _white_bitboard = bitboard_losing_discs;
+		    _black_bitboard = bitboard_wining_discs;
+		  }
+		else
+		  {
+		    _black_bitboard  = bitboard_losing_discs;
+		    _white_bitboard = bitboard_wining_discs;
+		  }
+		return true;
+	      }
+
+	  // There isn't a white disc so we can't flip
+	  if ((bitboard_losing_discs >> (coordinates) & 1ULL) == 0)
+	    return false;
+
+	  ++nb_discs_flipped;
+	  bitboard_losing_discs &= ~(DISC << coordinates);// Remove the disc
+	  bitboard_wining_discs |= (DISC << coordinates); // Add the disc  
+	}
+      return false;
+      break;
+	
+    case north_west :
+      while ((coordinates % _board_size) != _board_size && coordinates > _board_size - 1)// Test if the given direction is in the board
+	{
+	  coordinates += _board_size + 1;
+	  // Check if we flip at least one disc
+	  if ((bitboard_wining_discs >> (coordinates) & 1ULL) == 1)
+	    if (nb_discs_flipped == 0)
+	      return false;
+	    else
+	      {
+		//Move llegal so real bitboards become the copied. 
+		if (_black_turn)
+		  {
+		    _white_bitboard = bitboard_losing_discs;
+		    _black_bitboard = bitboard_wining_discs;
+		  }
+		else
+		  {
+		    _black_bitboard  = bitboard_losing_discs;
+		    _white_bitboard = bitboard_wining_discs;
+		  }
+		return true;
+	      }
+
+	  // There isn't a white disc so we can't flip
+	  if ((bitboard_losing_discs >> (coordinates) & 1ULL) == 0)
+	    return false;
+
+	  ++nb_discs_flipped;
+	  bitboard_losing_discs &= ~(DISC << coordinates);// Remove the disc
+	  bitboard_wining_discs |= (DISC << coordinates); // Add the disc  
+	}
+      return false;
+      break;
+	
+    case north_east :
+      while ((coordinates % _board_size) == _board_size - 1 && coordinates > _board_size - 1)// Test if the given direction is in the board
+	{
+	  coordinates += _board_size - 1;
+	  // Check if we flip at least one disc
+	  if ((bitboard_wining_discs >> (coordinates) & 1ULL) == 1)
+	    if (nb_discs_flipped == 0)
+	      return false;
+	    else
+	      {
+		//Move llegal so real bitboards become the copied. 
+		if (_black_turn)
+		  {
+		    _white_bitboard = bitboard_losing_discs;
+		    _black_bitboard = bitboard_wining_discs;
+		  }
+		else
+		  {
+		    _black_bitboard  = bitboard_losing_discs;
+		    _white_bitboard = bitboard_wining_discs;
+		  }
+		return true;
+	      }
+
+	  // There isn't a white disc so we can't flip
+	  if ((bitboard_losing_discs >> (coordinates) & 1ULL) == 0)
+	    return false;
+	  
+	  ++nb_discs_flipped;
+	  bitboard_losing_discs &= ~(DISC << coordinates);// Remove the disc
+	  bitboard_wining_discs |= (DISC << coordinates); // Add the disc  
+	}
+      return false;
+      break;
+	
+    case south_west :
+      while ((coordinates % _board_size) == _board_size && (coordinates < (nb_cases - _board_size)))// Test if the given direction is in the board
+	{
+	  coordinates -= _board_size - 1;
+	  // Check if we flip at least one disc
+	  if ((bitboard_wining_discs >> (coordinates) & 1ULL) == 1)
+	    if (nb_discs_flipped == 0)
+	      return false;
+	    else
+	      {
+		//Move llegal so real bitboards become the copied. 
+		if (_black_turn)
+		  {
+		    _white_bitboard = bitboard_losing_discs;
+		    _black_bitboard = bitboard_wining_discs;
+		  }
+		else
+		  {
+		    _black_bitboard  = bitboard_losing_discs;
+		    _white_bitboard = bitboard_wining_discs;
+		  }
+		return true;
+	      }
+
+	  // There isn't a white disc so we can't flip
+	  if ((bitboard_losing_discs >> (coordinates) & 1ULL) == 0)
+	    return false;
+
+	  ++nb_discs_flipped;
+	  bitboard_losing_discs &= ~(DISC << coordinates);// Remove the disc
+	  bitboard_wining_discs |= (DISC << coordinates); // Add the disc  
+	}
+      return false;
+
+      break;
+    case south_east :
+      while ((coordinates % _board_size) == _board_size - 1 && (coordinates < (nb_cases - _board_size)))// Test if the given direction is in the board
+	{
+	  coordinates -= _board_size + 1;
+	  // Check if we flip at least one disc
+	  if ((bitboard_wining_discs >> (coordinates) & 1ULL) == 1)
+	    if (nb_discs_flipped == 0)
+	      return false;
+	    else
+	      {
+		//Move llegal so real bitboards become the copied. 
+		if (_black_turn)
+		  {
+		    _white_bitboard = bitboard_losing_discs;
+		    _black_bitboard = bitboard_wining_discs;
+		  }
+		else
+		  {
+		    _black_bitboard  = bitboard_losing_discs;
+		    _white_bitboard = bitboard_wining_discs;
+		  }
+		return true;
+	      }
+
+	  // There isn't a white disc so we can't flip
+	  if ((bitboard_losing_discs >> (coordinates) & 1ULL) == 0)
+	    return false;
+
+	  ++nb_discs_flipped;
+	  bitboard_losing_discs &= ~(DISC << coordinates);// Remove the disc
+	  bitboard_wining_discs |= (DISC << coordinates); // Add the disc  
+	}
+      return false;
+	  
+      break;
+    case east :
+      while ((coordinates % _board_size) != _board_size - 1)// Test if the given direction is in the board
+	{
+	  --coordinates;
+	  // Check if we flip at least one disc
+	  if ((bitboard_wining_discs >> (coordinates) & 1ULL) == 1)
+	    if (nb_discs_flipped == 0)
+	      return false;
+	    else
+	      {
+		//Move llegal so real bitboards become the copied. 
+		if (_black_turn)
+		  {
+		    _white_bitboard = bitboard_losing_discs;
+		    _black_bitboard = bitboard_wining_discs;
+		  }
+		else
+		  {
+		    _black_bitboard  = bitboard_losing_discs;
+		    _white_bitboard = bitboard_wining_discs;
+		  }
+		return true;
+	      }
+
+	  // There isn't a white disc so we can't flip
+	  if ((bitboard_losing_discs >> (coordinates) & 1ULL) == 0)
+	    return false;
+
+	  ++nb_discs_flipped;
+	  bitboard_losing_discs &= ~(DISC << coordinates);// Remove the disc
+	  bitboard_wining_discs |= (DISC << coordinates); // Add the disc  
+	}
+      return false;  
+      break;
+      
+    case west:
+      while ((coordinates % _board_size) != _board_size)// Test if the given direction is in the board
+	{
+	  ++coordinates;
+	  // Check if we flip at least one disc
+	  if ((bitboard_wining_discs >> (coordinates) & 1ULL) == 1)
+	    if (nb_discs_flipped == 0)
+	      return false;
+	    else
+	      {
+		//Move llegal so real bitboards become the copied. 
+		if (_black_turn)
+		  {
+		    _white_bitboard = bitboard_losing_discs;
+		    _black_bitboard = bitboard_wining_discs;
+		  }
+		else
+		  {
+		    _black_bitboard  = bitboard_losing_discs;
+		    _white_bitboard = bitboard_wining_discs;
+		  }
+		return true;
+	      }
+
+	  // There isn't a white disc so we can't flip
+	  if ((bitboard_losing_discs >> (coordinates) & 1ULL) == 0)
+	    return false;
+
+	  ++nb_discs_flipped;
+	  bitboard_losing_discs &= ~(DISC << coordinates);// Remove the disc
+	  bitboard_wining_discs |= (DISC << coordinates); // Add the disc  
+	}
+      return false;
+      break;
+    default :
+      //lancer une exeption
+      break;
+    }  
+  }
+  
   void board::display ()
   {
     char collumn ('A');
@@ -49,7 +361,7 @@ namespace reversi
 	    cout << endl << line << " ";
 	    line++;
 	  }
-	  check = (_white_bitboard >> i) & 1ULL;           // Get the i-th bit of the white bitboard.
+	check = (_white_bitboard >> i) & 1ULL;           // Get the i-th bit of the white bitboard.
 	if (check == EMPTY)                                // Check if there is not white disc.
 	  {
 	    check = (_black_bitboard >> i) & 1ULL;         // Get the i-th bit of the black bitboard.
@@ -61,8 +373,25 @@ namespace reversi
     cout << endl;
   }
 
+  
+
   int board::end_game ()
   {
+    int nb_white_discs = 0, nb_black_discs = 0;
+    int i;
+    for (i = 0; i < pow(_board_size, 2); i++)
+      {
+	if ((_white_bitboard >> 1) & 1ULL == 1)
+	  nb_white_discs ++;
+	_white_bitboard >= 1;
+	if ((_black_bitboard >> 1) & 1ULL == 1)
+	  nb_black_discs ++;
+	_black_bitboard >= 1;
+      }
+    if (nb_black_discs > nb_white_discs)
+      return black_win;
+    if (nb_black_discs < nb_white_discs)
+      return black_lose;
+    return tie;
   }
-  
 }
