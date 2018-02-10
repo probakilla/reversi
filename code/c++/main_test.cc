@@ -1,0 +1,21 @@
+CPPUNIT_TEST_SUITE_REGISTRATION(test_board);
+
+int main (int argc, cahr* argv [])
+{
+  CPPUNIT_NS::TestResult testresult;
+
+  CPPUNIT_NS::TestResultCollector collectedresults;
+  testresult.addListener (&collectedresults);
+
+  CPPUNIT_NS::BriefTestProgressListener progress;
+  testresult.addListener (&progress);
+
+  CPPUNIT_NS::TestRunner testrunner;
+  testrunner.addTest (CPPUNIT_NS::TestFactoryRegistry::getRegistry().makeTest ());
+  testrunner.run(testresult);
+
+  CPPUNIT_NS::CompilerOutputter compileroutputter(&collectedresults, std::cerr);
+  compileroutputter.write ();
+
+  return collectedresults.wasSuccessful() ? 0 : 1;
+}
