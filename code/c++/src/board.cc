@@ -316,10 +316,11 @@ namespace reversi
 
   __int128 board::get_mobility (bitboard current_bitboard, bitboard opponent_bitboard)
   {
-    bitboard empty = ~(opponent_bitboard | current_bitboard);//The empty cell
+    bitboard empty = ~(opponent_bitboard | current_bitboard);// Bitboard of empty cell
     bitboard candidates,  moves = 0;
-    bool negative_shift;
+    bool negative_shift;// True if shift must be negative
     __int128 shift;
+
     for (int i = north; i != end_enum; i++)
       {
 	switch (i)
@@ -328,47 +329,57 @@ namespace reversi
 	    negative_shift = true;
 	    shift = _board_size;
 	    break;
+	    
 	  case south :
 	    shift = _board_size;
 	    negative_shift = false;
 	    break;
+	    
 	  case east :
 	    negative_shift = true;
 	    shift = 1;
 	    break;
-	  case west :
-	    negative_shift = false;
 	    
+	  case west :
+	    negative_shift = false;	    
 	    shift = 1;
 	    break;
+	    
 	  case north_west :
 	    negative_shift = true;
 	    shift = _board_size + 1;
 	    break;
+	    
 	  case north_east :
 	    negative_shift = true;
 	    shift = _board_size - 1;
 	    break;
+	    
 	  case south_west :
 	    negative_shift = false;
 	    shift = _board_size - 1;
 	    break;
+	    
 	  case south_east :
 	    negative_shift = false;
 	    shift = _board_size + 1;
 	    break;
+	    
 	  default :
 	    throw string ("ERREUR : Direction invalide\n");// Invalid direction
 	    break;
 	  }
-
+	
+	//Because left shift with negative value doesn't work when expected
 	if (negative_shift)
 	  candidates = opponent_bitboard & (current_bitboard << shift);
+	
 	else
 	  candidates = opponent_bitboard & (current_bitboard >> shift);
 
 	while (candidates != 0)
 	  {
+	    //Because left shift with negative value doesn't work when expected	    
 	    if (negative_shift)
 	      {
 		moves |= empty & (candidates << shift);

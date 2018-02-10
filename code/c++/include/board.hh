@@ -73,6 +73,9 @@ namespace reversi
      */
     void display_rules ();
 
+    /**
+     * Return the bitboard of possible moves for the current_player.
+     */
     __int128 get_mobility (bitboard current_bitboard, bitboard opponent_bitboard);
   };
 }
