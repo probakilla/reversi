@@ -10,6 +10,8 @@ namespace reversi
     board (/*int size*/); /* ==== PROTOTYPE ==== */ // size will be a parameter in final version
     virtual ~board ();
 
+    typedef __int128 bitboard;
+    
     //Whereas black win the game at the end or if he lose eg white wins, or if there is a tie. 
     enum Black_End_State {black_win, black_lose, tie};
 
@@ -47,7 +49,7 @@ namespace reversi
     bool _black_turn; // False means the white must play.
     
     // One bitboard for each player (black & white) the game is initialized with the classic four discs in the center.
-    __int128 _black_bitboard, _white_bitboard;
+    bitboard _black_bitboard, _white_bitboard, _mobility_bitboard;
 
     // Switch the current player
     void switch_turn ();
@@ -64,12 +66,14 @@ namespace reversi
      * Return -1 if the move isn't legal.
      * Return 0 if we don't already know.
      */
-    int check_legal_move (__int128 current_bitboard, __int128 opponent_bitboard, int coordinate, bool disc_flipped);
+    int check_legal_move (bitboard current_bitboard, bitboard opponent_bitboard, int coordinate, bool disc_flipped);
 
     /**
      * Display rules of the games.
      */
     void display_rules ();
+
+    __int128 get_mobility (bitboard current_bitboard, bitboard opponent_bitboard);
   };
 }
 
