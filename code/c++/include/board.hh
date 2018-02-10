@@ -38,7 +38,7 @@ namespace reversi
     /**
      * Used to know the winner of the game.
      * Return 1 if black won, 0 if white won and -1 if there is a tie.
-    */
+     */
     int end_game ();
     
   private: 
@@ -52,7 +52,7 @@ namespace reversi
     // Switch the current player
     void switch_turn ();
 
-        /**
+    /**
      * Place a disc in the bitboard with this coordinates. 
      * / ! \ coordinates are supposed to be verrified by the player, just used by the constructor
      */

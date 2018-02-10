@@ -27,6 +27,11 @@ namespace reversi
 
   board::~board () {}
 
+  bool board::get_black_turn ()
+  {
+    return _black_turn;
+  }
+
   void board::switch_turn ()
   {
     _black_turn = !_black_turn;
