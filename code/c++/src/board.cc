@@ -40,13 +40,39 @@ namespace reversi
     switch_turn ();
   }
 
-  
+  int board::check_legal_move (__int128 current_bitboard, __int128 opponent_bitboard, int coordinates, bool disc_flipped)
+  {
+    if ((current_bitboard >> (coordinates) & 1ULL) == 1)
+      if (disc_flipped == 0)
+	return -1;
+      else
+	{
+	  //Move llegal so real bitboards become the copied. 
+	  if (_black_turn)
+	    {
+	      _white_bitboard = opponent_bitboard;
+	      _black_bitboard = current_bitboard;
+	    }
+	  else
+	    {
+	      _black_bitboard  = opponent_bitboard;
+	      _white_bitboard = current_bitboard;
+	    }
+	  return 1;
+	}
+
+    // There isn't a white disc so we can't flip
+    if ((opponent_bitboard >> (coordinates) & 1ULL) == 0)
+      return -1;
+    return 0;
+
+  }
   
   // Fonction a factoriser
   bool board::flip_discs (int coordinates, int dir)
   {
-    int nb_discs_flipped = 0, nb_cases = pow(_board_size, 2);
-    
+    int   nb_cases = pow(_board_size, 2);
+    bool disc_flipped = false;
     __int128 bitboard_losing_discs, bitboard_wining_discs;
 
     //We used a copy of the bitboards
@@ -70,30 +96,11 @@ namespace reversi
 	{
 	  coordinates += _board_size;
 	  // Check if we flip at least one disc
-	  if ((bitboard_wining_discs >> (coordinates) & 1ULL) == 1)
-	    if (nb_discs_flipped == 0)
-	      return false;
-	    else
-	      {
-		//Move llegal so real bitboards become the copied. 
-		if (_black_turn)
-		  {
-		    _white_bitboard = bitboard_losing_discs;
-		    _black_bitboard = bitboard_wining_discs;
-		  }
-		else
-		  {
-		    _black_bitboard  = bitboard_losing_discs;
-		    _white_bitboard = bitboard_wining_discs;
-		  }
-		return true;
-	      }
-
-	  // There isn't a white disc so we can't flip
-	  if ((bitboard_losing_discs >> (coordinates) & 1ULL) == 0)
+	  if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs, coordinates, disc_flipped) == -1)
 	    return false;
-
-	  ++nb_discs_flipped;
+	  if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs, coordinates, disc_flipped) == 1)
+	    return true;
+	  disc_flipped = true;
 	  bitboard_losing_discs &= ~(DISC << coordinates);// Remove the disc
 	  bitboard_wining_discs |= (DISC << coordinates); // Add the disc  
 	}
@@ -105,30 +112,11 @@ namespace reversi
 	{
 	  coordinates -= _board_size;
 	  // Check if we flip at least one disc
-	  if ((bitboard_wining_discs >> (coordinates) & 1ULL) == 1)
-	    if (nb_discs_flipped == 0)
-	      return false;
-	    else
-	      {
-		//Move llegal so real bitboards become the copied. 
-		if (_black_turn)
-		  {
-		    _white_bitboard = bitboard_losing_discs;
-		    _black_bitboard = bitboard_wining_discs;
-		  }
-		else
-		  {
-		    _black_bitboard  = bitboard_losing_discs;
-		    _white_bitboard = bitboard_wining_discs;
-		  }
-		return true;
-	      }
-
-	  // There isn't a white disc so we can't flip
-	  if ((bitboard_losing_discs >> (coordinates) & 1ULL) == 0)
+	  if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs, coordinates, disc_flipped) == -1)
 	    return false;
-
-	  ++nb_discs_flipped;
+	  if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs, coordinates, disc_flipped) == 1)
+	    return true;
+	  disc_flipped = true;
 	  bitboard_losing_discs &= ~(DISC << coordinates);// Remove the disc
 	  bitboard_wining_discs |= (DISC << coordinates); // Add the disc  
 	}
@@ -140,30 +128,11 @@ namespace reversi
 	{
 	  coordinates += _board_size + 1;
 	  // Check if we flip at least one disc
-	  if ((bitboard_wining_discs >> (coordinates) & 1ULL) == 1)
-	    if (nb_discs_flipped == 0)
-	      return false;
-	    else
-	      {
-		//Move llegal so real bitboards become the copied. 
-		if (_black_turn)
-		  {
-		    _white_bitboard = bitboard_losing_discs;
-		    _black_bitboard = bitboard_wining_discs;
-		  }
-		else
-		  {
-		    _black_bitboard  = bitboard_losing_discs;
-		    _white_bitboard = bitboard_wining_discs;
-		  }
-		return true;
-	      }
-
-	  // There isn't a white disc so we can't flip
-	  if ((bitboard_losing_discs >> (coordinates) & 1ULL) == 0)
+	  if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs, coordinates, disc_flipped) == -1)
 	    return false;
-
-	  ++nb_discs_flipped;
+	  if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs, coordinates, disc_flipped) == 1)
+	    return true;
+	  disc_flipped = true;
 	  bitboard_losing_discs &= ~(DISC << coordinates);// Remove the disc
 	  bitboard_wining_discs |= (DISC << coordinates); // Add the disc  
 	}
@@ -175,30 +144,11 @@ namespace reversi
 	{
 	  coordinates += _board_size - 1;
 	  // Check if we flip at least one disc
-	  if ((bitboard_wining_discs >> (coordinates) & 1ULL) == 1)
-	    if (nb_discs_flipped == 0)
-	      return false;
-	    else
-	      {
-		//Move llegal so real bitboards become the copied. 
-		if (_black_turn)
-		  {
-		    _white_bitboard = bitboard_losing_discs;
-		    _black_bitboard = bitboard_wining_discs;
-		  }
-		else
-		  {
-		    _black_bitboard  = bitboard_losing_discs;
-		    _white_bitboard = bitboard_wining_discs;
-		  }
-		return true;
-	      }
-
-	  // There isn't a white disc so we can't flip
-	  if ((bitboard_losing_discs >> (coordinates) & 1ULL) == 0)
+	  if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs, coordinates, disc_flipped) == -1)
 	    return false;
-	  
-	  ++nb_discs_flipped;
+	  if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs, coordinates, disc_flipped) == 1)
+	    return true;
+	  disc_flipped = true;
 	  bitboard_losing_discs &= ~(DISC << coordinates);// Remove the disc
 	  bitboard_wining_discs |= (DISC << coordinates); // Add the disc  
 	}
@@ -210,30 +160,11 @@ namespace reversi
 	{
 	  coordinates -= _board_size - 1;
 	  // Check if we flip at least one disc
-	  if ((bitboard_wining_discs >> (coordinates) & 1ULL) == 1)
-	    if (nb_discs_flipped == 0)
-	      return false;
-	    else
-	      {
-		//Move llegal so real bitboards become the copied. 
-		if (_black_turn)
-		  {
-		    _white_bitboard = bitboard_losing_discs;
-		    _black_bitboard = bitboard_wining_discs;
-		  }
-		else
-		  {
-		    _black_bitboard  = bitboard_losing_discs;
-		    _white_bitboard = bitboard_wining_discs;
-		  }
-		return true;
-	      }
-
-	  // There isn't a white disc so we can't flip
-	  if ((bitboard_losing_discs >> (coordinates) & 1ULL) == 0)
+	  if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs, coordinates, disc_flipped) == -1)
 	    return false;
-
-	  ++nb_discs_flipped;
+	  if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs, coordinates, disc_flipped) == 1)
+	    return true;
+	  disc_flipped = true;
 	  bitboard_losing_discs &= ~(DISC << coordinates);// Remove the disc
 	  bitboard_wining_discs |= (DISC << coordinates); // Add the disc  
 	}
@@ -245,30 +176,11 @@ namespace reversi
 	{
 	  coordinates -= _board_size + 1;
 	  // Check if we flip at least one disc
-	  if ((bitboard_wining_discs >> (coordinates) & 1ULL) == 1)
-	    if (nb_discs_flipped == 0)
-	      return false;
-	    else
-	      {
-		//Move llegal so real bitboards become the copied. 
-		if (_black_turn)
-		  {
-		    _white_bitboard = bitboard_losing_discs;
-		    _black_bitboard = bitboard_wining_discs;
-		  }
-		else
-		  {
-		    _black_bitboard  = bitboard_losing_discs;
-		    _white_bitboard = bitboard_wining_discs;
-		  }
-		return true;
-	      }
-
-	  // There isn't a white disc so we can't flip
-	  if ((bitboard_losing_discs >> (coordinates) & 1ULL) == 0)
+	  if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs, coordinates, disc_flipped) == -1)
 	    return false;
-
-	  ++nb_discs_flipped;
+	  if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs, coordinates, disc_flipped) == 1)
+	    return true;
+	  disc_flipped = true;
 	  bitboard_losing_discs &= ~(DISC << coordinates);// Remove the disc
 	  bitboard_wining_discs |= (DISC << coordinates); // Add the disc  
 	}
@@ -280,30 +192,11 @@ namespace reversi
 	{
 	  --coordinates;
 	  // Check if we flip at least one disc
-	  if ((bitboard_wining_discs >> (coordinates) & 1ULL) == 1)
-	    if (nb_discs_flipped == 0)
-	      return false;
-	    else
-	      {
-		//Move llegal so real bitboards become the copied. 
-		if (_black_turn)
-		  {
-		    _white_bitboard = bitboard_losing_discs;
-		    _black_bitboard = bitboard_wining_discs;
-		  }
-		else
-		  {
-		    _black_bitboard  = bitboard_losing_discs;
-		    _white_bitboard = bitboard_wining_discs;
-		  }
-		return true;
-	      }
-
-	  // There isn't a white disc so we can't flip
-	  if ((bitboard_losing_discs >> (coordinates) & 1ULL) == 0)
+	  if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs, coordinates, disc_flipped) == -1)
 	    return false;
-
-	  ++nb_discs_flipped;
+	  if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs, coordinates, disc_flipped) == 1)
+	    return true;
+	  disc_flipped = true;
 	  bitboard_losing_discs &= ~(DISC << coordinates);// Remove the disc
 	  bitboard_wining_discs |= (DISC << coordinates); // Add the disc  
 	}
@@ -314,31 +207,14 @@ namespace reversi
       while ((coordinates % _board_size) != _board_size)// Test if the given direction is in the board
 	{
 	  ++coordinates;
+	  
 	  // Check if we flip at least one disc
-	  if ((bitboard_wining_discs >> (coordinates) & 1ULL) == 1)
-	    if (nb_discs_flipped == 0)
-	      return false;
-	    else
-	      {
-		//Move llegal so real bitboards become the copied. 
-		if (_black_turn)
-		  {
-		    _white_bitboard = bitboard_losing_discs;
-		    _black_bitboard = bitboard_wining_discs;
-		  }
-		else
-		  {
-		    _black_bitboard  = bitboard_losing_discs;
-		    _white_bitboard = bitboard_wining_discs;
-		  }
-		return true;
-	      }
-
-	  // There isn't a white disc so we can't flip
-	  if ((bitboard_losing_discs >> (coordinates) & 1ULL) == 0)
+	  if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs, coordinates, disc_flipped) == -1)
 	    return false;
-
-	  ++nb_discs_flipped;
+	  if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs, coordinates, disc_flipped) == 1)
+	    return true;
+	  
+	  disc_flipped = true;
 	  bitboard_losing_discs &= ~(DISC << coordinates);// Remove the disc
 	  bitboard_wining_discs |= (DISC << coordinates); // Add the disc  
 	}

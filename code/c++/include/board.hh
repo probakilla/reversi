@@ -57,6 +57,14 @@ namespace reversi
      * / ! \ coordinates are supposed to be verrified by the player, just used by the constructor
      */
     void place_disc (int x, int y);
+
+    /**
+     * Check if the move is legal.
+     * Return 1 if the move is legal.
+     * Return -1 if the move isn't legal.
+     * Return 0 if we don't already know.
+     */
+    int check_legal_move (__int128 current_bitboard, __int128 opponent_bitboard, int coordinate, bool disc_flipped);
   };
 }
 
