@@ -65,6 +65,11 @@ namespace reversi
      * Return 0 if we don't already know.
      */
     int check_legal_move (__int128 current_bitboard, __int128 opponent_bitboard, int coordinate, bool disc_flipped);
+
+    /**
+     * Display rules of the games.
+     */
+    void display_rules ();
   };
 }
 

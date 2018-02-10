@@ -18,6 +18,8 @@ namespace reversi
   // initialization is temporary
   board::board () : _black_turn (DEFAULT_INIT_TURN), _board_size (DEFAULT_SIZE)
   {
+    display_rules ();
+    
     // Place the 4th initial discs.              
     place_disc (_board_size/2 + 1, _board_size/2);    // First black disc
     place_disc (_board_size/2, _board_size/2);        // First white disc
@@ -26,6 +28,11 @@ namespace reversi
   }
 
   board::~board () {}
+
+  void board::display_rules ()
+  {
+    cout << "Bienvenue dans le jeu de reversi\n" << endl;
+  }
 
   void board::switch_turn ()
   {
