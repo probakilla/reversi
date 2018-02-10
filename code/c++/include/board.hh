@@ -43,7 +43,7 @@ namespace reversi
     
   private: 
     // Size of the board (between 2 & 10).
-    int _board_size;
+    int _board_size, _nb_cases;
     bool _black_turn; // False means the white must play.
     
     // One bitboard for each player (black & white) the game is initialized with the classic four discs in the center.
