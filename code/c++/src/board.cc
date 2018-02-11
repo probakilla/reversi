@@ -277,17 +277,17 @@ namespace reversi
     cout << endl;
   }
 
-  bool board::move (int x, int y)
+  void board::move (int x, int y)
   {
     int coordinates ((x - 1) * _board_size + (y - 1));
     bool flipped = false;
     for (int i = board::north; i != board::end_enum; i++)
       if (flip_discs (coordinates, i))
-	{
-	  _mobility_bitboard = get_mobility (_white_bitboard, _black_bitboard);
 	  flipped = true;
-	}
-    return flipped;
+    if (!flipped)
+        throw string ("ERREUR : coup invalide");
+    _mobility_bitboard = get_mobility (_white_bitboard, _black_bitboard);
+    switch_turn ();
   }
 
   int board::end_game ()

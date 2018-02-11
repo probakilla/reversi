@@ -32,10 +32,10 @@ namespace reversi
     bool flip_discs (int coordinates, int dir);
 
     /**
-     * If the move is legal, place, flip discs and return true.
-     * Otherwise, do nothing and return false.
+     * Do the move if it's legal, update the _mobility_bitboard, and swithc the current player.
+     * Otherwise, throw an exception.
      */
-    bool move (int x, int y);
+    void move (int x, int y);
     
     /**
      * Used to know the winner of the game.
