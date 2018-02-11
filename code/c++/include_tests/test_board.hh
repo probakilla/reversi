@@ -2,17 +2,19 @@
 #define TEST_BOARD_HH
 
 #include "board.hh"
+#include <cppunit/TestCase.h>
 
 namespace tests
 {
   class test_board : public CppUnit::TestFixture
-  {
+  {    
+  private:
+    reversi::board* _board;
+    
   public:
     void setUp (void);
     void tearDown (void);
-
-  private:
-    Board* _board;
+    void test_switch_turn (void);
   };
   
 }
