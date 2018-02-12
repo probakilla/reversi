@@ -31,9 +31,10 @@ namespace reversi
 
   board::~board () {}
 
-  void board::display_rules ()
+  //Prototype d'affichage des rêgles.
+  const void board::display_rules ()
   {
-    cout << "Bienvenue dans le jeu de reversi\n" << endl;
+    cout << "Bienvenue dans le jeu de reversi.\nLe but du jeu est d'avoir plus de pion que son adversaire a la fin du jeu, qui se produit quand plus aucun joueur ne peut jouer.\nVous ne pouvez placer un pion que sur les cases représenter par *.\nUne fois placé le pion capture le pions adversaire ce trouvant entre le pion posé et un autre de vos pions (et ceci comme a l'horizontale, la vertivale et la diagonale).\n" << endl;
   }
 
   void board::switch_turn ()
@@ -49,7 +50,7 @@ namespace reversi
     switch_turn ();
   }
 
-  int board::check_legal_move (bitboard current_bitboard, bitboard opponent_bitboard, int coordinates, bool disc_flipped)
+  int board::check_legal_move (const bitboard & current_bitboard, const bitboard & opponent_bitboard, int coordinates, bool disc_flipped)
   {
     if ((current_bitboard >> (coordinates) & 1ULL) == 1)
       // There is a disc of the same player next to the placed_discs so the move is illegal    
@@ -244,7 +245,7 @@ namespace reversi
     }  
   }
   
-  void board::display ()
+  const void board::display ()
   {
     char collumn ('A');
     int i, check, line;
@@ -290,7 +291,7 @@ namespace reversi
     switch_turn ();
   }
 
-  int board::end_game ()
+  const int board::end_game ()
   {
     int nb_white_discs = 0, nb_black_discs = 0;
     int i;
@@ -308,13 +309,13 @@ namespace reversi
       }
     
     if (nb_black_discs > nb_white_discs)
-      return black_win;
+      return black;
     if (nb_black_discs < nb_white_discs)
-      return black_lose;
+      return white;
     return tie;
   }
 
-  __int128 board::get_mobility (bitboard current_bitboard, bitboard opponent_bitboard)
+  const __int128 board::get_mobility (const bitboard & current_bitboard, const bitboard & opponent_bitboard)
   {
     bitboard empty = ~(opponent_bitboard | current_bitboard);// Bitboard of empty cell
     bitboard candidates,  moves = 0;

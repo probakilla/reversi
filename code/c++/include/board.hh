@@ -8,12 +8,12 @@ namespace reversi
   public:
     
     board (/*int size*/); /* ==== PROTOTYPE ==== */ // size will be a parameter in final version
-    virtual ~board ();
+    ~board ();
 
     typedef __int128 bitboard;
     
     //Whereas black win the game at the end or if he lose eg white wins, or if there is a tie. 
-    enum Black_End_State {black_win, black_lose, tie};
+    enum Winner {black, white, tie};
 
     // The 8 directions to look for flip discs when we do a llegal move
     enum Direction {north, north_east, east, south_east, south, south_west, west, north_west, end_enum};
@@ -23,7 +23,7 @@ namespace reversi
      * Display in the terminal the board.
      * Bitboards are supposed to be correct here.
      */
-    void display ();
+    const void display ();
 
     /**
      * Flip discs in the indicate dir.
@@ -41,7 +41,12 @@ namespace reversi
      * Used to know the winner of the game.
      * Return 1 if black won, 0 if white won and -1 if there is a tie.
      */
-    int end_game ();
+    const int end_game ();
+    
+    /**
+     * Return the bitboard of possible moves for the current_player.
+     */
+    const __int128 get_mobility (const bitboard & current_bitboard, const bitboard & opponent_bitboard);
     
   private: 
     // Size of the board (between 2 & 10).
@@ -66,17 +71,12 @@ namespace reversi
      * Return -1 if the move isn't legal.
      * Return 0 if we don't already know.
      */
-    int check_legal_move (bitboard current_bitboard, bitboard opponent_bitboard, int coordinate, bool disc_flipped);
+    int check_legal_move (const bitboard & current_bitboard, const bitboard & opponent_bitboard, int coordinate, bool disc_flipped);
 
     /**
      * Display rules of the games.
      */
-    void display_rules ();
-
-    /**
-     * Return the bitboard of possible moves for the current_player.
-     */
-    __int128 get_mobility (bitboard current_bitboard, bitboard opponent_bitboard);
+    const void display_rules ();
   };
 }
 
