@@ -5,9 +5,10 @@
 #include <sstream>
 #include <fstream>
 
-#define BLANK_C "_"
-#define BLACK_C "X"
-#define WHITE_C "O"
+#define BLANK_C "_ "
+#define BLACK_C "X "
+#define WHITE_C "O "
+#define POSSIBLE_MOVE_C "* "
 #define SEP_C " "
 
 using namespace std;
@@ -258,27 +259,27 @@ namespace reversi
   {
     char collumn ('A');
     int i, check, line = 1;
-    cout.write("  ", 2);                                       // Shifting for the display of letters.
-    for (i = 0; i < _board_size; i++)                          // Display of letters
-      cout << collumn++ << " ";
+    cout << "  ";                                                            // Shifting for the display of letters.
+    for (i = 0; i < _board_size; i++)                                        // Display of letters
+      cout << collumn++ << SEP_C;
     for (i = 0; i < _nb_cases; i++)
       {
-	if ((i % _board_size) == 0)                            // If we reach the end of the line (i multiple of _board_size)
-	    cout << '\n' << line++ << " ";
-	check = (_white_bitboard >> i) & 1ULL;                 // Get the i-th bit of the white bitboard.
-	if (check == EMPTY)                                    // Check if there is not white disc.
+	if ((i % _board_size) == 0)                                          // If we reach the end of the line (i multiple of _board_size)
+	    cout << '\n' << line++ << SEP_C;
+	check = (_white_bitboard >> i) & 1ULL;                               // Get the i-th bit of the white bitboard.
+	if (check == EMPTY)                                                  // Check if there is not white disc.
 	  {
-	    check = (_black_bitboard >> i) & 1ULL;             // Get the i-th bit of the black bitboard.
+	    check = (_black_bitboard >> i) & 1ULL;                           // Get the i-th bit of the black bitboard.
 	    if (check == EMPTY)
 	      {
-		check = (_mobility_bitboard >> i) & 1ULL;      // Get the i-th bit of the black bitboard.
-		(check == EMPTY)? cout << "_ " : cout << "* "; // Check if there is black disc or nothing.
+		check = (_mobility_bitboard >> i) & 1ULL;                    // Get the i-th bit of the black bitboard.
+		(check == EMPTY)? cout << BLANK_C : cout << POSSIBLE_MOVE_C; // Check if there is black disc or nothing.
 	      }
 	    else
-	      cout.write("X ", 2);
+	      cout << BLACK_C;
 	  }
-	else                                                   // There is a white disc.
-	  cout.write("O ", 2);
+	else                                                                 // There is a white disc.
+	  cout << WHITE_C;
       }
     cout << '\n';
   }
