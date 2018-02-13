@@ -1,4 +1,4 @@
-add_library(libreversi src/board.cc src/application.cc src/player.cc)
+add_library(libreversi src/board.cc src/application.cc src/player.cc src/user.cc)
 target_include_directories (libreversi PUBLIC $(CMAKE_CURRENT_SOURCE_DIR))
 
 include_directories(include)
@@ -30,6 +30,6 @@ set( CPPUNIT_LIBRARY debug     ${CPPUNIT_LIBRARY_DEBUG}
 # ...
 
 
-add_executable(reversi main.cc src/board.cc src/application.cc src/player.cc)
+add_executable(reversi main.cc src/board.cc src/application.cc src/player.cc src/user.cc)
 add_executable(test_reversi test_main.cc tests/test_board.cc src/board.cc)
 target_link_libraries(test_reversi LINK_PUBLIC libreversi cppunit)

@@ -1,5 +1,6 @@
 #include "board.hh"
 #include "player.hh"
+#include "user.hh"
 #include <iostream>
 
 using namespace reversi;
@@ -7,6 +8,10 @@ using namespace reversi;
 int main()
 {
   board brd;
-  brd.display ();
+  user usr;
+  while (1) {
+    brd.display ();
+    usr.ask_move(brd);
+  }
   return 0;
 }

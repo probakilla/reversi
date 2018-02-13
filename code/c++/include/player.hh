@@ -1,6 +1,8 @@
 #ifndef PLAYER_HH
 #define PLAYER_HH
 
+#include "board.hh"
+
 namespace reversi
 {
   class player
@@ -8,8 +10,7 @@ namespace reversi
   public:
     player();
     virtual ~player();
-
-    void ask_move ();
+    virtual void ask_move(board b) = 0;
   };
 }
 
