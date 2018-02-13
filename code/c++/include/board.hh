@@ -67,7 +67,7 @@ namespace reversi
 
     /**
      * Check if the move is legal.
-     * Return 1 if the move is legal.
+     * Return 1 if the move is legal, and modify the bitboard.
      * Return -1 if the move isn't legal.
      * Return 0 if we don't already know.
      */
