@@ -36,17 +36,31 @@ namespace reversi
      * Otherwise, throw an exception.
      */
     void move (int x, int y);
+
+    /**
+     * Check if the current player can move.
+     * Return true if he can move.
+     * Otherwise return false.
+     */
+    const bool can_move ();
     
     /**
      * Used to know the winner of the game.
-     * Return 1 if black won, 0 if white won and -1 if there is a tie.
+     * Return black if black won, white if white won and tie if there is a tie.
      */
-    const int end_game ();
+    const int end_game_state ();
+
+    const bool is_game_over ();
     
     /**
-     * Return the bitboard of possible moves for the current_player.
+     * Do the calculation of the mobility bitboard for the current_player.
      */
-    const __int128 get_mobility (const bitboard & current_bitboard, const bitboard & opponent_bitboard);
+    const void mobility_calculation (const bitboard & current_bitboard, const bitboard & opponent_bitboard);
+
+    /*
+     * Return the _mobility_bitboard.
+     */
+    const bitboard get_mobility_bitboard ();
     
   private: 
     // Size of the board (between 2 & 10).
@@ -56,7 +70,7 @@ namespace reversi
     // One bitboard for each player (black & white) the game is initialized with the classic four discs in the center.
     bitboard _black_bitboard, _white_bitboard, _mobility_bitboard;
 
-    // Switch the current player
+    // Switch the current player.
     void switch_turn ();
 
     /**
