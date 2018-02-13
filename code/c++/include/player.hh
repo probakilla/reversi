@@ -8,6 +8,8 @@ namespace reversi
   public:
     player();
     virtual ~player();
+
+    void ask_move ();
   };
 }
 

@@ -1,4 +1,5 @@
 #include "board.hh"
+#include "player.hh"
 #include <iostream>
 
 using namespace reversi;
@@ -6,8 +7,6 @@ using namespace reversi;
 int main()
 {
   board* brd = new board ();
-  brd->display ();
-  brd->move (3, 4);
   brd->display ();
   return 0;
 }

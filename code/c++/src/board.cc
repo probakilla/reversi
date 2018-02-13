@@ -1,7 +1,6 @@
 #include "board.hh"
 #include <iostream>
 #include <cmath>
-#include <bitset>
 
 const int DEFAULT_SIZE = 8;
 const __int128 DISC = 1;
@@ -44,7 +43,7 @@ namespace reversi
   
   void board::place_disc (int x, int y)
   { 
-    __int128 coordinates ((x - 1) * _board_size + (y - 1));                 // Number of the bit we want to change in the bitboard.
+    __int128 coordinates ((x - 1) * _board_size + (y - 1));         // Number of the bit we want to change in the bitboard.
     (_black_turn)? _black_bitboard |= (DISC << (coordinates)) :     // Change the black bitboard if the var black is true.
       _white_bitboard |= (DISC << (coordinates));                   // Change the white bitboard if the var white is false.
     switch_turn ();
