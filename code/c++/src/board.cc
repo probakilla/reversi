@@ -1,6 +1,16 @@
 #include "board.hh"
+#include <exception>
 #include <iostream>
 #include <cmath>
+
+using namespace std;
+class illegal_move : public exception
+{
+   virtual const char* what() const throw()
+  {
+    return "Coup illégal\n";
+  }
+}illegal_move;
 
 const int DEFAULT_SIZE = 8;
 const __int128 DISC = 1;
@@ -12,8 +22,6 @@ const bool WHITE_TURN = false;
 
 namespace reversi
 {
-  using namespace std;
-  
   /* ==== PROTOTYPE ==== */
   // initialization is temporary
   board::board () : _black_turn (DEFAULT_INIT_TURN), _board_size (DEFAULT_SIZE), _nb_cases (pow(_board_size, 2))
@@ -33,7 +41,7 @@ namespace reversi
   //Prototype d'affichage des rêgles.
   const void board::display_rules ()
   {
-    cout << "Bienvenue dans le jeu de reversi.\nLe but du jeu est d'avoir plus de pion que son adversaire a la fin du jeu, qui se produit quand plus aucun joueur ne peut jouer.\nVous ne pouvez placer un pion que sur les cases représenter par *.\nUne fois placé le pion capture le pions adversaire ce trouvant entre le pion posé et un autre de vos pions (et ceci comme a l'horizontale, la vertivale et la diagonale).\n" << endl;
+    cout << "Bienvenue dans le jeu de reversi.\nLe but du jeu est d'avoir plus de pion que son adversaire a la fin du jeu, qui se produit quand plus aucun joueur ne peut jouer.\nVous ne pouvez placer un pion que sur les cases représenter par *.\nUne fois placé le pion capture le pions adversaire ce trouvant entre le pion posé et un autre de vos pions (et ceci comme a l'horizontale, la vertivale et la diagonale).\n\n";
   }
 
   void board::switch_turn ()
@@ -58,7 +66,7 @@ namespace reversi
     
       else
 	{
-	  // Move llegal so real bitboards become the copied. 
+	  // Move legal so real bitboards become the copied. 
 	  if (_black_turn)
 	    {
 	      _white_bitboard = opponent_bitboard;
@@ -74,9 +82,9 @@ namespace reversi
 
     // There isn't a disc so we can't flip
     if ((opponent_bitboard >> (coordinates) & 1ULL) == 0)
-      return -1;
+      throw illegal_move;
     
-    return 0;//We don't know if the move is legal
+    return 0;// We don't know if the move is legal
 
   }
 
@@ -238,43 +246,36 @@ namespace reversi
 	}
       return false;
       break;
-    default :
-      throw string ("ERREUR : Direction invalide\n");// Invalid direction
-      break;
     }  
   }
   
   const void board::display ()
   {
     char collumn ('A');
-    int i, check, line;
-    line = 1;
-    cout << "  ";                                          // Shifting for the display of letters.
-    for (i = 0; i < _board_size; i++)                      // Display of letters
+    int i, check, line = 1;
+    cout.write("  ", 2);                                       // Shifting for the display of letters.
+    for (i = 0; i < _board_size; i++)                          // Display of letters
       cout << collumn++ << " ";
     for (i = _nb_cases - 1; i >= 0; i--)
       {
-	if ((i % _board_size) == _board_size - 1)          // If we reach the end of the line (i multiple of _board_size)
+	if ((i % _board_size) == _board_size - 1)              // If we reach the end of the line (i multiple of _board_size)
+	    cout << '\n' << line++ << " ";
+	check = (_white_bitboard >> i) & 1ULL;                 // Get the i-th bit of the white bitboard.
+	if (check == EMPTY)                                    // Check if there is not white disc.
 	  {
-	    cout << endl << line << " ";
-	    line++;
-	  }
-	check = (_white_bitboard >> i) & 1ULL;             // Get the i-th bit of the white bitboard.
-	if (check == EMPTY)                                // Check if there is not white disc.
-	  {
-	    check = (_black_bitboard >> i) & 1ULL;         // Get the i-th bit of the black bitboard.
+	    check = (_black_bitboard >> i) & 1ULL;             // Get the i-th bit of the black bitboard.
 	    if (check == EMPTY)
 	      {
-		check = (_mobility_bitboard >> i) & 1ULL;    // Get the i-th bit of the black bitboard.
+		check = (_mobility_bitboard >> i) & 1ULL;      // Get the i-th bit of the black bitboard.
 		(check == EMPTY)? cout << "_ " : cout << "* "; // Check if there is black disc or nothing.
 	      }
 	    else
-	      cout << "X ";
+	      cout.write("X ", 2);
 	  }
-	else                                               // There is a white disc.
-	  cout << "O ";
+	else                                                   // There is a white disc.
+	  cout.write("O ", 2);
       }
-    cout << endl;
+    cout << '\n';
   }
 
   void board::move (int x, int y)
@@ -285,7 +286,7 @@ namespace reversi
       if (flip_discs (coordinates, i))
 	  flipped = true;
     if (!flipped)
-        throw string ("ERREUR : coup invalide");
+        throw illegal_move;
     _mobility_bitboard = get_mobility (_white_bitboard, _black_bitboard);
     switch_turn ();
   }
