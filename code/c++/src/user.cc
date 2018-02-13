@@ -11,7 +11,7 @@ namespace reversi
 
     user::~user() {}
 
-    void user::ask_move (board b)
+    void user::ask_move (board & b)
     {
         int x, y;
         string move;

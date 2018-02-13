@@ -257,9 +257,9 @@ namespace reversi
     cout.write("  ", 2);                                       // Shifting for the display of letters.
     for (i = 0; i < _board_size; i++)                          // Display of letters
       cout << collumn++ << " ";
-    for (i = _nb_cases - 1; i >= 0; i--)
+    for (i = 0; i < _nb_cases; i++)
       {
-	if ((i % _board_size) == _board_size - 1)              // If we reach the end of the line (i multiple of _board_size)
+	if ((i % _board_size) == 0)                            // If we reach the end of the line (i multiple of _board_size)
 	    cout << '\n' << line++ << " ";
 	check = (_white_bitboard >> i) & 1ULL;                 // Get the i-th bit of the white bitboard.
 	if (check == EMPTY)                                    // Check if there is not white disc.
@@ -281,7 +281,7 @@ namespace reversi
 
   void board::move (int x, int y)
   {
-    int coordinates ((x - 1) * _board_size + (y - 1));
+    int coordinates ((x - 1) +  _board_size * (y - 1));
     bool flipped = false;
     for (int i = board::north; i != board::end_enum; i++)
       if (flip_discs (coordinates, i))
@@ -289,6 +289,7 @@ namespace reversi
     if (!flipped)
         throw illegal_move;
     _mobility_bitboard = get_mobility (_white_bitboard, _black_bitboard);
+    // display ();
     switch_turn ();
   }
 

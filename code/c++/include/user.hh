@@ -11,7 +11,7 @@ namespace reversi
   public:
     user();
     virtual ~user();
-    virtual void ask_move(board b);
+    virtual void ask_move(board & b);
   };
 }
 

@@ -9,10 +9,11 @@ int main()
 {
   board brd;
   user usr;
+
   while (1)
     {
-      brd.display ();
-      usr.ask_move(brd);
+        brd.display ();
+	usr.ask_move(brd);
     }
   return 0;
 }
