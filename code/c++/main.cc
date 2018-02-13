@@ -6,7 +6,7 @@ using namespace reversi;
 
 int main()
 {
-  board* brd = new board ();
-  brd->display ();
+  board brd;
+  brd.display ();
   return 0;
 }
