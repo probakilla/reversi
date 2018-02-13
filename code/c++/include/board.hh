@@ -1,6 +1,8 @@
 #ifndef BOARD_HH
 #define BOARD_HH
 
+#include <iostream>
+
 namespace reversi
 {
   class board
@@ -62,6 +64,12 @@ namespace reversi
      */
     const bitboard get_mobility_bitboard ();
     
+    /**
+     * TODO : DOC
+     * wrapper for serialization in an output stream.
+     */
+    void serialize(std::ostream&) const;
+    
   private: 
     // Size of the board (between 2 & 10).
     int _board_size, _nb_cases;
@@ -92,6 +100,20 @@ namespace reversi
      */
     const void display_rules ();
   };
+
+  /**
+   * TODO : DOC
+   * operator overload for board's serialization.
+   */
+  std::ostream & operator<<(std::ostream&, const board&);
+
+  /**
+   * TODO : DOC
+   * wrapper to save the board in a file.
+   * @param 
+   * @param 
+   */
+  void save_at(const std::string&, const board&);
 }
 
 #endif /* !defined(BOARD_HH) */

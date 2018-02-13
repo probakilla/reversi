@@ -2,6 +2,13 @@
 #include <exception>
 #include <iostream>
 #include <cmath>
+#include <sstream>
+#include <fstream>
+
+#define BLANK_C "_"
+#define BLACK_C "X"
+#define WHITE_C "O"
+#define SEP_C " "
 
 using namespace std;
 class illegal_move : public exception
@@ -430,5 +437,52 @@ namespace reversi
   const  board::bitboard board::get_mobility_bitboard ()
   {
     return _mobility_bitboard;
+  }
+
+  void board::serialize(std::ostream& os) const
+  {
+      std::stringstream ss;
+
+      ss << (_black_turn == true?"X":"O");
+      for (int i = _nb_cases - 1; i >= 0; --i)
+      {
+          if (i % _board_size == _board_size - 1)
+              ss << std::endl;
+          if (((_white_bitboard >> i) & 1ULL) == EMPTY)
+          {
+              if (((_black_bitboard >> i) & 1ULL) == EMPTY)
+                  ss << BLANK_C;
+              else
+                  ss << BLACK_C;
+          }
+          else
+              ss << WHITE_C;
+          ss << SEP_C;
+      }
+      ss << std::endl;
+      os << ss.str();
+  }
+
+  std::ostream & operator<<(std::ostream& os, const board& brd)
+  {
+      brd.serialize(os);
+      return os;
+  }
+
+  void save_at(const std::string & filename, const board& brd)
+  {
+      try
+      {
+          std::ofstream os;
+
+          os.exceptions(std::ofstream::failbit);
+          os.open(filename, std::ios::trunc);
+          os << brd;
+          os.close();
+      }
+      catch (std::ios_base::failure& e)
+      {
+          std::cerr << "An Error occured while saving to file " << filename << std::endl;
+      }
   }
 }
