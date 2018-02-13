@@ -82,7 +82,7 @@ namespace reversi
 
     // There isn't a disc so we can't flip
     if ((opponent_bitboard >> (coordinates) & 1ULL) == 0)
-      throw illegal_move;
+      return -1;
     
     return 0;// We don't know if the move is legal
 
@@ -109,7 +109,8 @@ namespace reversi
     // Placement of the disc on the copy
      bitboard_wining_discs |= (DISC << coordinates);
      
-    switch (dir) {
+    switch (dir)
+      {
     case north :
       while (coordinates < (_nb_cases - _board_size))// Test if the given direction is in the board
 	{	  
