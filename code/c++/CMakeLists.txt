@@ -31,5 +31,5 @@ set( CPPUNIT_LIBRARY debug     ${CPPUNIT_LIBRARY_DEBUG}
 
 
 add_executable(reversi main.cc src/board.cc src/application.cc src/player.cc)
-add_executable(reversi_test test_main.cc tests/test_board.cc src/board.cc)
-target_link_libraries(reversi_test LINK_PUBLIC libreversi)
+add_executable(test_reversi test_main.cc tests/test_board.cc src/board.cc)
+target_link_libraries(test_reversi LINK_PUBLIC libreversi cppunit)

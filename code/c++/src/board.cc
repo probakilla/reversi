@@ -28,7 +28,7 @@ namespace reversi
     _mobility_bitboard = get_mobility (_black_bitboard, _white_bitboard);
   }
 
-  board::~board () {}
+   board::~board () {}
 
   //Prototype d'affichage des rêgles.
   const void board::display_rules ()

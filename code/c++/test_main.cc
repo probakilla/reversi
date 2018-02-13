@@ -3,5 +3,8 @@
 
 int main (int argc, char* argv [])
 {
-  return 0;
+  CppUnit::TextUi::TestRunner runner;
+  runner.addTest(CppUnit::TestFactoryRegistry::getRegistry().makeTest());
+  runner.run();
+  return EXIT_SUCCESS;
 }

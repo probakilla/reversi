@@ -2,10 +2,18 @@
 
 #include "test_board.hh"
 
-using namespace reversi;
+namespace tests
+{
+  CPPUNIT_TEST_SUITE_REGISTRATION (test_board);
+  
+  void test_board::setUp ()
+  {
+    _fixture = new reversi::board ();
+  }
 
-void setUp (void) {}
-
-void tearDown (void) {}
-
-void test_switch_turn (void) {}
+  void test_board::tearDown ()
+  {
+    delete _fixture;
+    _fixture = NULL;
+  }
+}
