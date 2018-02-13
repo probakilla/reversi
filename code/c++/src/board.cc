@@ -68,7 +68,7 @@ namespace reversi
   {
     if ((current_bitboard >> (coordinates) & 1ULL) == 1)
       // There is a disc of the same player next to the placed_discs so the move is illegal    
-      if (disc_flipped == 0)
+      if (!disc_flipped)
 	return -1;
     
       else
@@ -92,7 +92,6 @@ namespace reversi
       return -1;
     
     return 0;// We don't know if the move is legal
-
   }
 
   
@@ -204,8 +203,6 @@ namespace reversi
 	break;
 
       case south_west :
-
-	
 	while ((coordinates % _board_size) != 0 && coordinates < (_nb_cases - _board_size))// Test if the given direction is in the board
 	  {
 	    coordinates += _board_size - 1;// Coordinates at the south_west of the disc
@@ -353,7 +350,7 @@ namespace reversi
       }
   }
 
-  const void board::mobility_calculation (const bitboard & current_bitboard, const bitboard & opponent_bitboard)
+  void board::mobility_calculation (const bitboard & current_bitboard, const bitboard & opponent_bitboard)
   {
     bitboard empty = ~(opponent_bitboard | current_bitboard);// Bitboard of empty cell
     bitboard candidates,  moves = 0;
@@ -375,12 +372,12 @@ namespace reversi
 	    break;
 	    
 	  case east :
-	    negative_shift = true;
+	    negative_shift = false;
 	    shift = 1;
 	    break;
 	    
 	  case west :
-	    negative_shift = false;	    
+	    negative_shift = true;	    
 	    shift = 1;
 	    break;
 	    

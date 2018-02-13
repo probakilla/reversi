@@ -57,7 +57,7 @@ namespace reversi
     /**
      * Do the calculation of the mobility bitboard for the current_player.
      */
-    const void mobility_calculation (const bitboard & current_bitboard, const bitboard & opponent_bitboard);
+    void mobility_calculation (const bitboard & current_bitboard, const bitboard & opponent_bitboard);
 
     /*
      * Return the _mobility_bitboard.
