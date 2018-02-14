@@ -8,9 +8,9 @@ namespace reversi
   class player
   {
   public:
-    player();
-    virtual ~player();
-    virtual void ask_move(board & b) = 0;
+    player ();
+    virtual ~player ();
+    virtual void ask_move (board &b) = 0;
   };
 }
 

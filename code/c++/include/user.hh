@@ -6,12 +6,12 @@
 
 namespace reversi
 {
-  class user: public player
+  class user : public player
   {
   public:
-    user();
-    virtual ~user();
-    virtual void ask_move(board & b);
+    user ();
+    virtual ~user ();
+    virtual void ask_move (board &b);
   };
 }
 

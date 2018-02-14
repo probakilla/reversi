@@ -9,8 +9,8 @@ namespace tests
 {
   class test_board : public CppUnit::TestCase
   {
-    CPPUNIT_TEST_SUITE(test_board);
-    CPPUNIT_TEST_SUITE_END();
+    CPPUNIT_TEST_SUITE (test_board);
+    CPPUNIT_TEST_SUITE_END ();
     
   private:
     reversi::board* _fixture;
@@ -20,4 +20,5 @@ namespace tests
     void tearDown ();
   };
 }
+
 #endif /* !defined(TEST_BOARD_HH) */

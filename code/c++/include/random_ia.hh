@@ -6,12 +6,12 @@
 
 namespace reversi
 {
-  class random_ia: public player
+  class random_ia : public player
   {
   public:
-    random_ia();
-    virtual ~random_ia();
-    virtual void ask_move(board & b);
+    random_ia ();
+    virtual ~random_ia ();
+    virtual void ask_move (board &b);
   };
 }
 

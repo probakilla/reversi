@@ -1,9 +1,9 @@
 #include "board.hh"
 #include <exception>
 #include <iostream>
-#include <cmath>
 #include <sstream>
 #include <fstream>
+#include <cmath>
 
 #define BLANK_C "_ "
 #define BLACK_C "X "
@@ -12,17 +12,18 @@
 #define SEP_C " "
 
 using namespace std;
+
 class illegal_move : public exception
 {
-   virtual const char* what() const throw()
+  virtual const char *what () const throw ()
   {
-    return "Coup illégal\n";
+    return "Coup illégal !\n";
   }
-}illegal_move;
+} illegal_move;
 
 const int DEFAULT_SIZE = 8;
-const __int128 DISC = 1;
 const int NB_PLAYER = 2;
+const __int128 DISC = 1;
 const int EMPTY = 0;
 const bool DEFAULT_INIT_TURN = true;
 const bool BLACK_TURN = true;
@@ -30,53 +31,74 @@ const bool WHITE_TURN = false;
 
 namespace reversi
 {
-  /* ==== PROTOTYPE ==== */
-  // initialization is temporary
-  board::board () : _black_turn (DEFAULT_INIT_TURN), _board_size (DEFAULT_SIZE), _nb_cases (pow(_board_size, 2))
+  /* ==== PROTOTYPE ==== Initialization is temporary. */
+  board::board () : _black_turn (DEFAULT_INIT_TURN), _board_size (DEFAULT_SIZE),
+		    _nb_cases (pow (_board_size, 2))
   {
-    ++_board_size;                                    // Because we have one bit for the end of a row.
+    /* Because there is one bit for the end of a row. */
+    ++_board_size;
     display_rules ();
     _black_bitboard = _white_bitboard = 0;
-    // Place the 4th initial discs.              
-    place_disc (_board_size/2, _board_size/2 + 1);    // First black disc
-    place_disc (_board_size/2, _board_size/2);        // First white disc
-    place_disc (_board_size/2 + 1, _board_size/2);    // Second black disc
-    place_disc (_board_size/2 + 1, _board_size/2 + 1);// Second white disc
+    /* Places the four initial discs. */
+    /* First black disc. */
+    place_disc (_board_size / 2, _board_size / 2 + 1);
+    /* First white disc. */
+    place_disc (_board_size / 2, _board_size / 2);
+    /* Second black disc. */
+    place_disc (_board_size / 2 + 1, _board_size / 2);
+    /* Second white disc. */
+    place_disc (_board_size / 2 + 1, _board_size / 2 + 1);
     mobility_calculation (_black_bitboard, _white_bitboard);
-
   }
-
-   board::~board () {}
-
-  //Prototype d'affichage des rêgles.
+  
+  board::~board () {}
+  
+  /* Prototype d'affichage des rêgles. */
   const void board::display_rules ()
   {
-    cout << "Bienvenue dans le jeu de reversi.\nLe but du jeu est d'avoir plus de pion que son adversaire a la fin du jeu, qui se produit quand plus aucun joueur ne peut jouer.\nVous ne pouvez placer un pion que sur les cases représenter par *.\nUne fois placé le pion capture le pions adversaire ce trouvant entre le pion posé et un autre de vos pions (et ceci comme a l'horizontale, la vertivale et la diagonale).\n\n";
+    cout << "Bienvenue dans le jeu de reversi.\n";
+    cout << "Le but du jeu est d'avoir plus de pions que son adversaire ";
+    cout << "dici la fin de la partie, qui se produit lorsque plus aucun ";
+    cout << "joueur ne peut jouer.\n";
+    cout << "Vous ne pouvez placer un pion que sur les cases représentées ";
+    cout << "par une *.\n";
+    cout << "Une fois placé, le pion capture les pions adverses se trouvant ";
+    cout << "entre le pion posé et un autre de vos pions (et ceci à ";
+    cout << "l'horizontale, comme à la vertivale ou la diagonale).\n\n";
   }
-
+  
   void board::switch_turn ()
   {
     _black_turn = !_black_turn;
   }
   
   void board::place_disc (int x, int y)
-  { 
-    __int128 coordinates ((x) + (_board_size) *(y-1));              // Number of the bit we want to change in the bitboard.
-    (_black_turn)? _black_bitboard |= (DISC << (coordinates)) :     // Change the black bitboard if the var black is true.
-      _white_bitboard |= (DISC << (coordinates));                   // Change the white bitboard if the var white is false.
-     switch_turn ();
+  {
+    /* Number of the bit we want to change in the bitboard. */
+    __int128 coordinates ((x) + (_board_size) * (y - 1));
+    /**
+     * Change the black bitboard if the var black is true.
+     * Change the black bitboard if the var black is true.
+     * Change the white bitboard if the var white is false.
+     */
+    (_black_turn) ? _black_bitboard |= (DISC << (coordinates)) :
+      _white_bitboard |= (DISC << (coordinates));
+    switch_turn ();
   }
-
-  int board::check_legal_move (const bitboard & current_bitboard, const bitboard & opponent_bitboard, int coordinates, bool disc_flipped)
+  
+  int board::check_legal_move (const bitboard &current_bitboard,
+			       const bitboard &opponent_bitboard,
+			       int coordinates, bool disc_flipped)
   {
     if ((current_bitboard >> (coordinates) & 1ULL) == 1)
-      // There is a disc of the same player next to the placed_discs so the move is illegal    
+      /* There is a disc of the same player next to the placed discs
+	 so the move is illegal */
       if (!disc_flipped)
 	return -1;
     
       else
 	{
-	  // Move legal so real bitboards become the copied. 
+	  /* Move is legal so real bitboards become the copied. */
 	  if (_black_turn)
 	    {
 	      _white_bitboard = opponent_bitboard;
@@ -84,26 +106,26 @@ namespace reversi
 	    }
 	  else
 	    {
-	      _black_bitboard  = opponent_bitboard;
+	      _black_bitboard = opponent_bitboard;
 	      _white_bitboard = current_bitboard;
 	    }
 	  return 1;
 	}
-
-    // There isn't a disc so we can't flip
+    
+    /* There is not a disc so we can not flip. */
     if ((opponent_bitboard >> (coordinates) & 1ULL) == 0)
       return -1;
     
-    return 0;// We don't know if the move is legal
+    /* We do not know if the move is legal. */
+    return 0;
   }
-
   
   bool board::flip_discs (int coordinates, int dir)
   {
     bool disc_flipped = false;
     bitboard bitboard_losing_discs, bitboard_wining_discs;
-
-    // We save the bitboard to use a copy of them
+    
+    /* We save the bitboards to use copies of them. */
     if (_black_turn)
       {
 	bitboard_losing_discs = _white_bitboard;
@@ -114,142 +136,210 @@ namespace reversi
 	bitboard_losing_discs = _black_bitboard;
 	bitboard_wining_discs = _white_bitboard;
       }
-
-    // Placement of the disc on the copy
+    
+    /* Placement of the disc on the copy. */
     bitboard_wining_discs |= (DISC << coordinates);
     switch (dir)
       {
       case north :
-	while ((coordinates % _board_size) != 0 && coordinates > (_board_size - 1))// Test if the given direction is in the board
+	/* Tests if the given direction is in the board. */
+	while ((coordinates % _board_size) != 0 &&
+	       coordinates > (_board_size - 1))
 	  {
-	    coordinates -= _board_size;// Coordinates at the north of the disc
+	    /* Coordinates at the north of the disc. */
+	    coordinates -= _board_size;
 
-	    if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs, coordinates, disc_flipped) == -1)
+	    if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs,
+				  coordinates, disc_flipped) == -1)
 	      return false;
-	    if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs, coordinates, disc_flipped) == 1)
+	    if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs,
+				  coordinates, disc_flipped) == 1)
 	      return true;
-	    disc_flipped = true;                            // At least one disc is flipped
-	    bitboard_losing_discs &= ~(DISC << coordinates);// Remove the disc
-	    bitboard_wining_discs |= (DISC << coordinates); // Add the disc
-	  }
-	return false;
-	break;
-
-      case north_east :
-	while ((coordinates % _board_size) != 0 && (coordinates % _board_size) != (_board_size - 1) && coordinates > (_board_size - 1))// Test if the given direction is in the board
-	  {
-	    coordinates -= _board_size - 1;// Coordinates at the north-east of the disc
-
-	    if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs, coordinates, disc_flipped) == -1)
-	      return false;
-	    if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs, coordinates, disc_flipped) == 1)
-	      return true;
-	  
-	    disc_flipped = true;                            // At least one disc is flipped
-	    bitboard_losing_discs &= ~(DISC << coordinates);// Remove the disc
-	    bitboard_wining_discs |= (DISC << coordinates); // Add the disc  
-	  }
-	return false;
-	break;
-
-      case east :
-	while ((coordinates % _board_size) != 0 && (coordinates % _board_size) != (_board_size - 1))// Test if the given direction is in the board
-	  {
-	    ++coordinates;// Coordinates at the east of the disc
-
-	    if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs, coordinates, disc_flipped) == -1)
-	      return false;
-	    if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs, coordinates, disc_flipped) == 1)
-	      return true;
-	  
+	    /* At least one disc is flipped. */
 	    disc_flipped = true;
-	    bitboard_losing_discs &= ~(DISC << coordinates);// Remove the disc
-	    bitboard_wining_discs |= (DISC << coordinates); // Add the disc  
+	    /* Removes the disc. */
+	    bitboard_losing_discs &= ~(DISC << coordinates);
+	    /* Adds the disc. */
+	    bitboard_wining_discs |= (DISC << coordinates);
 	  }
-	return false;  
+	return false;
 	break;
-
-      case south_east :
-
-	while ((coordinates % _board_size) != 0 && (coordinates % _board_size) != (_board_size - 1) && coordinates < (_nb_cases - _board_size))// Test if the given direction is in the board
+        
+      case north_east :
+	/* Tests if the given direction is in the board. */
+	while ((coordinates % _board_size) != 0 &&
+	       (coordinates % _board_size) != (_board_size - 1) &&
+	       coordinates > (_board_size - 1))
 	  {
-
-	    coordinates += _board_size + 1;// Coordinates at the south_east of the disc
-	    if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs, coordinates, disc_flipped) == -1)
+	    /* Coordinates at the north-east of the disc. */
+	    coordinates -= _board_size - 1;
+	    
+	    if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs,
+				  coordinates, disc_flipped) == -1)
 	      return false;
-	    if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs, coordinates, disc_flipped) == 1)
+	    if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs,
+				  coordinates, disc_flipped) == 1)
 	      return true;
-	  
-	    disc_flipped = true;                            // At least one disc is flipped
-	    bitboard_losing_discs &= ~(DISC << coordinates);// Remove the disc
-	    bitboard_wining_discs |= (DISC << coordinates); // Add the disc  
+
+	    /* At least one disc is flipped. */
+	    disc_flipped = true;
+	    /* Removes the disc. */
+	    bitboard_losing_discs &= ~(DISC << coordinates);
+	    /* Adds the disc. */
+	    bitboard_wining_discs |= (DISC << coordinates);
+	  }
+	return false;
+	break;
+        
+      case east :
+	/* Tests if the given direction is in the board. */
+	while ((coordinates % _board_size) != 0 &&
+	       (coordinates % _board_size) != (_board_size - 1))
+	  {
+	    /* Coordinates at the east of the disc. */
+	    ++coordinates;
+	    
+	    if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs,
+				  coordinates, disc_flipped) == -1)
+	      return false;
+	    if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs,
+				  coordinates, disc_flipped) == 1)
+	      return true;
+
+	    /* At least one disc is flipped. */
+	    disc_flipped = true;
+	    /* Removes the disc. */
+	    bitboard_losing_discs &= ~(DISC << coordinates);
+	    /* Adds the disc. */
+	    bitboard_wining_discs |= (DISC << coordinates); 
+	  }
+	return false;
+	break;
+        
+      case south_east :
+	/* Tests if the given direction is in the board. */
+	while ((coordinates % _board_size) != 0 &&
+	       (coordinates % _board_size) != (_board_size - 1) &&
+	       coordinates < (_nb_cases - _board_size))
+	  {
+	    /* Coordinates at the south_east of the disc. */
+	    coordinates += _board_size + 1;
+	    
+	    if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs,
+				  coordinates, disc_flipped) == -1)
+	      return false;
+	    if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs,
+				  coordinates, disc_flipped) == 1)
+	      return true;
+	    
+	    /* At least one disc is flipped. */
+	    disc_flipped = true;
+	    /* Removes the disc. */
+	    bitboard_losing_discs &= ~(DISC << coordinates);
+	    /* Adds the disc. */
+	    bitboard_wining_discs |= (DISC << coordinates);
 	  }
 	return false;	  
 	break;
-      
+        
       case south :
-	
-	while ((coordinates % _board_size) != 0 && coordinates < (_nb_cases - _board_size))// Test if the given direction is in the board
+	/* Tests if the given direction is in the board. */
+	while ((coordinates % _board_size) != 0 &&
+	       coordinates < (_nb_cases - _board_size))
 	  {
-	    coordinates += _board_size;// Coordinates at the south of the disc
-	    if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs, coordinates, disc_flipped) == -1)
+	    /* Coordinates at the south of the disc. */
+	    coordinates += _board_size;
+	    
+	    if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs,
+				  coordinates, disc_flipped) == -1)
 	      return false;
-	    if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs, coordinates, disc_flipped) == 1)
+	    if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs,
+				  coordinates, disc_flipped) == 1)
 	      return true;
-	  
-	    disc_flipped = true;                            // At least one disc is flipped
-	    bitboard_losing_discs &= ~(DISC << coordinates);// Remove the disc
-	    bitboard_wining_discs |= (DISC << coordinates); // Add the disc  
+
+	    /* At least one disc is flipped. */
+	    disc_flipped = true;
+	    /* Removes the disc. */
+	    bitboard_losing_discs &= ~(DISC << coordinates);
+	    /* Adds the disc. */
+	    bitboard_wining_discs |= (DISC << coordinates); 
 	  }
 	return false;
 	break;
-
+        
       case south_west :
-	while ((coordinates % _board_size) != 0 && (coordinates % _board_size) != 1 && coordinates < (_nb_cases - _board_size))// Test if the given direction is in the board
+	/* Tests if the given direction is in the board. */
+	while ((coordinates % _board_size) != 0 &&
+	       (coordinates % _board_size) != 1 &&
+	       coordinates < (_nb_cases - _board_size))
 	  {
-	    coordinates += _board_size - 1;// Coordinates at the south_west of the disc
-	    if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs, coordinates, disc_flipped) == -1)
+	    /* Coordinates at the south_west of the disc. */
+	    coordinates += _board_size - 1;
+	    
+	    if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs,
+				  coordinates, disc_flipped) == -1)
 	      return false;
-	    if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs, coordinates, disc_flipped) == 1)
+	    if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs,
+				  coordinates, disc_flipped) == 1)
 	      return true;
-	  
-	    disc_flipped = true;                            // At least one disc is flipped
-	    bitboard_losing_discs &= ~(DISC << coordinates);// Remove the disc
-	    bitboard_wining_discs |= (DISC << coordinates); // Add the disc  
-	  }
-	return false;
-	break;
 
-      case west:
-	while ((coordinates % _board_size) != 0 && (coordinates % _board_size) != 1)// Test if the given direction is in the board
-	  {
-	    --coordinates;// Coordinates at the west of the disc
-	  
-	    if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs, coordinates, disc_flipped) == -1)
-	      return false;
-	    if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs, coordinates, disc_flipped) == 1)
-	      return true;
-	  
-	    disc_flipped = true;                            // At least one disc is flipped
-	    bitboard_losing_discs &= ~(DISC << coordinates);// Remove the disc
-	    bitboard_wining_discs |= (DISC << coordinates); // Add the disc  
+	    /* At least one disc is flipped. */
+	    disc_flipped = true;
+	    /* Removes the disc. */
+	    bitboard_losing_discs &= ~(DISC << coordinates);
+	    /* Adds the disc. */
+	    bitboard_wining_discs |= (DISC << coordinates); 
 	  }
 	return false;
 	break;
-	
-      case north_west :
-	while ((coordinates % _board_size) != 0 && (coordinates % _board_size) != 1 && coordinates > (_board_size - 1))// Test if the given direction is in the board
+        
+      case west:
+	/* Tests if the given direction is in the board. */
+	while ((coordinates % _board_size) != 0 &&
+	       (coordinates % _board_size) != 1)
 	  {
-	    // Coordinates at the north-west of the disc
-	    coordinates -= _board_size + 1;
-	    if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs, coordinates, disc_flipped) == -1)
-	      return false;
-	    if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs, coordinates, disc_flipped) == 1)
-	      return true;
+	    /* Coordinates at the west of the disc. */
+	    --coordinates;
 	  
-	    disc_flipped = true;                            // At least one disc is flipped
-	    bitboard_losing_discs &= ~(DISC << coordinates);// Remove the disc
-	    bitboard_wining_discs |= (DISC << coordinates); // Add the disc  
+	    if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs,
+				  coordinates, disc_flipped) == -1)
+	      return false;
+	    if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs,
+				  coordinates, disc_flipped) == 1)
+	      return true;
+
+	    /* At least one disc is flipped. */
+	    disc_flipped = true;
+	    /* Removes the disc. */
+	    bitboard_losing_discs &= ~(DISC << coordinates);
+	    /* Adds the disc. */
+	    bitboard_wining_discs |= (DISC << coordinates);
+	  }
+	return false;
+	break;
+        
+      case north_west :
+	/* Tests if the given direction is in the board. */
+	while ((coordinates % _board_size) != 0 &&
+	       (coordinates % _board_size) != 1 &&
+	       coordinates > (_board_size - 1))
+	  {
+	    /* Coordinates at the north-west of the disc. */
+	    coordinates -= _board_size + 1;
+	    
+	    if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs,
+				  coordinates, disc_flipped) == -1)
+	      return false;
+	    if (check_legal_move (bitboard_wining_discs, bitboard_losing_discs,
+				  coordinates, disc_flipped) == 1)
+	      return true;
+	    
+	    /* At least one disc is flipped. */
+	    disc_flipped = true;
+	    /* Removes the disc. */
+	    bitboard_losing_discs &= ~(DISC << coordinates);
+	    /* Adds the disc. */
+	    bitboard_wining_discs |= (DISC << coordinates);
 	  }
 	return false;
 	break;
@@ -260,41 +350,51 @@ namespace reversi
   {
     char collumn ('A');
     int i, j = 0, check, line = 1;
-    cout << "  ";                                                            // Shifting for the display of letters.
-    for (i = 1; i < _board_size; i++)                                        // Display of letters
+    /* Shifting for the display of letters. */
+    cout << "  ";
+    /* Display of letters. */
+    for (i = 1; i < _board_size; i++)
       cout << collumn++ << SEP_C;
     for (i = 1; i < (_nb_cases + _board_size); i++)
       {
 	j++;
-	if ((i % _board_size) != 0)                                              // To not count the bit for the end of a row
+	/* To not count the bit for the end of a row. */
+	if ((i % _board_size) != 0)
 	  {
 	    j = i;
-	    if ((i %( _board_size)) == 1)                                        // If we reach the end of the line (i multiple of _board_size)
+	    /* If we reach the end of the line (i multiple of _board_size). */
+	    if ((i % _board_size) == 1)
 	      cout << '\n' << line++ << SEP_C;
-	    check = (_white_bitboard >> j) & 1ULL;                               // Get the i-th bit of the white bitboard.
-	    if (check == EMPTY)                                                  // Check if there is not white disc.
+	    /* Gets the i-th bit of the white bitboard. */
+	    check = (_white_bitboard >> j) & 1ULL;
+	    /* Checks if there is no white disc. */
+	    if (check == EMPTY)
 	      {
-		check = (_black_bitboard >> j) & 1ULL;                           // Get the i-th bit of the black bitboard.
+		/* Gets the i-th bit of the black bitboard. */
+		check = (_black_bitboard >> j) & 1ULL;
 		if (check == EMPTY)
 		  {
-		    check = (_mobility_bitboard >> j) & 1ULL;                    // Get the i-th bit of the black bitboard.
-		    (check == EMPTY)? cout << BLANK_C : cout << POSSIBLE_MOVE_C; // Check if there is black disc or nothing.
+		    /* Gets the i-th bit of the black bitboard. */
+		    check = (_mobility_bitboard >> j) & 1ULL;
+		    /* Checks if there is black disc or nothing. */
+		    (check == EMPTY)? cout << BLANK_C : cout << POSSIBLE_MOVE_C;
 		  }
 		else
 		  cout << BLACK_C;
 	      }
-	    else                                                                 // There is a white disc.
+	    /* There is a white disc. */
+	    else
 	      cout << WHITE_C;
 	  }
-	    else
-	      j--;
-	  }
+	else
+	  j--;
+      }
     cout << '\n';
   }
-
+  
   void board::move (int x, int y)
   {
-    int coordinates =  (x  + _board_size *(y-1));
+    int coordinates =  (x  + _board_size * (y - 1));
     bool flipped = false;
     for (int i = board::north; i != board::end_enum; i++)
       if (flip_discs (coordinates, i))
@@ -306,29 +406,28 @@ namespace reversi
       mobility_calculation (_black_bitboard, _white_bitboard);
     else
       mobility_calculation (_white_bitboard, _black_bitboard);
-    // display ();
-
+    /* display (); */
   }
-
+  
   const bool board::can_move ()
   {
     if (_mobility_bitboard == 0)
       return false;
     return true;
   }
-
+  
   const int board::end_game_state ()
   {
     int nb_white_discs = 0, nb_black_discs = 0;
     int i;
     for (i = 0; i < _nb_cases; i++)
       {
-	// Count the number of white discs
+	/* Counts the number of white discs. */
 	if ((_white_bitboard >> 1) & 1ULL == 1)
 	  nb_white_discs ++;
 	_white_bitboard >= 1;
-
-	// Count the number of black discs
+        
+	/* Counts the number of black discs. */
 	if ((_black_bitboard >> 1) & 1ULL == 1)
 	  nb_black_discs ++;
 	_black_bitboard >= 1;
@@ -340,7 +439,7 @@ namespace reversi
       return white;
     return tie;
   }
-
+  
   const bool board::is_game_over ()
   {
     if (can_move ())
@@ -358,14 +457,17 @@ namespace reversi
 	  return true;
       }
   }
-
-  void board::mobility_calculation (const bitboard & current_bitboard, const bitboard & opponent_bitboard)
+  
+  void board::mobility_calculation (const bitboard & current_bitboard,
+				    const bitboard & opponent_bitboard)
   {
-    bitboard empty = ~(opponent_bitboard | current_bitboard);// Bitboard of empty cell
+    /* Bitboard of empty cells. */
+    bitboard empty = ~(opponent_bitboard | current_bitboard);
     bitboard candidates,  moves = 0;
-    bool negative_shift;// True if shift must be negative
+    /* True if shift must be negative. */
+    bool negative_shift;
     __int128 shift;
-
+    
     for (int i = north; i != end_enum; i++)
       {
 	switch (i)
@@ -411,20 +513,23 @@ namespace reversi
 	    break;
 	    
 	  default :
-	    throw string ("ERREUR : Direction invalide\n");// Invalid direction
+	    /* Invalid direction. */
+	    throw string ("ERREUR : Direction invalide\n");
 	    break;
 	  }
 	
-	//Because left shift with negative value doesn't work when expected
+	/* Because left shift with negative value does not work
+	   when expected. */
 	if (negative_shift)
 	  candidates = opponent_bitboard & (current_bitboard << shift);
 	
 	else
 	  candidates = opponent_bitboard & (current_bitboard >> shift);
-
+        
 	while (candidates != 0)
 	  {
-	    //Because left shift with negative value doesn't work when expected	    
+	    /* Because left shift with negative value does not work
+	       when expected. */
 	    if (negative_shift)
 	      {
 		moves |= empty & (candidates << shift);
@@ -439,56 +544,58 @@ namespace reversi
       }
     _mobility_bitboard = moves;
   }
-
+  
   const  board::bitboard board::get_mobility_bitboard ()
   {
     return _mobility_bitboard;
   }
-
-  void board::serialize(std::ostream& os) const
+  
+  void board::serialize(std::ostream &os) const
   {
-      std::stringstream ss;
-
-      ss << (_black_turn == true?"X":"O");
-      for (int i = _nb_cases - 1; i >= 0; --i)
+    std::stringstream ss;
+    
+    ss << (_black_turn == true ? "X" : "O");
+    for (int i = _nb_cases - 1; i >= 0; --i)
       {
-          if (i % _board_size == _board_size - 1)
-              ss << std::endl;
-          if (((_white_bitboard >> i) & 1ULL) == EMPTY)
+	if (i % _board_size == _board_size - 1)
+	  ss << std::endl;
+	if (((_white_bitboard >> i) & 1ULL) == EMPTY)
           {
-              if (((_black_bitboard >> i) & 1ULL) == EMPTY)
-                  ss << BLANK_C;
-              else
-                  ss << BLACK_C;
+	    if (((_black_bitboard >> i) & 1ULL) == EMPTY)
+	      ss << BLANK_C;
+	    else
+	      ss << BLACK_C;
           }
-          else
-              ss << WHITE_C;
-          ss << SEP_C;
+	else
+	  ss << WHITE_C;
+	ss << SEP_C;
       }
-      ss << std::endl;
-      os << ss.str();
+    ss << std::endl;
+    os << ss.str();
   }
-
-  std::ostream & operator<<(std::ostream& os, const board& brd)
+  
+  std::ostream &operator<<(std::ostream &os, const board &brd)
   {
-      brd.serialize(os);
-      return os;
+    brd.serialize(os);
+    return os;
   }
-
-  void save_at(const std::string & filename, const board& brd)
+  
+  void save_at(const std::string &filename, const board &brd)
   {
-      try
+    try
       {
-          std::ofstream os;
-
-          os.exceptions(std::ofstream::failbit);
-          os.open(filename, std::ios::trunc);
-          os << brd;
-          os.close();
+	std::ofstream os;
+        
+	os.exceptions(std::ofstream::failbit);
+	os.open(filename, std::ios::trunc);
+	os << brd;
+	
+	os.close();
       }
-      catch (std::ios_base::failure& e)
+    catch (std::ios_base::failure& e)
       {
-          std::cerr << "An Error occured while saving to file " << filename << std::endl;
+	std::cerr << "An Error occured while saving to file " << filename
+		  << std::endl;
       }
   }
 }

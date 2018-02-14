@@ -1,6 +1,5 @@
-#include <iostream>
-
 #include "test_board.hh"
+#include <iostream>
 
 namespace tests
 {
@@ -10,7 +9,7 @@ namespace tests
   {
     _fixture = new reversi::board ();
   }
-
+  
   void test_board::tearDown ()
   {
     delete _fixture;

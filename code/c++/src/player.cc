@@ -2,7 +2,7 @@
 
 namespace reversi
 {
-  player::player() {}
-
-  player::~player() {}
+  player::player () {}
+  
+  player::~player () {}
 }

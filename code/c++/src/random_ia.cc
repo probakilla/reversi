@@ -5,22 +5,23 @@
 
 namespace reversi
 {
-    using namespace std;
-
-    random_ia::random_ia() {}
-
-    random_ia::~random_ia() {}
-
-    void random_ia::ask_move (board & b)
-    {
-        int x, y;
-        x = rand() % 8 + 1;
-        y = rand() % 8 + 1;
-        try {
-            b.move(x, y);
-        }
-        catch (exception& e) {
-            ask_move(b);
-        }
+  using namespace std;
+  
+  random_ia::random_ia () {}
+  
+  random_ia::~random_ia () {}
+  
+  void random_ia::ask_move (board &b)
+  {
+    int x, y;
+    while (1) {
+      x = rand() % 8 + 1;
+      y = rand() % 8 + 1;
+      try {
+	b.move (x, y);
+	break;
+      }
+      catch (exception &e) {}
     }
+  }
 }
