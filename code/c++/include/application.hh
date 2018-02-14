@@ -3,12 +3,12 @@
 
 namespace reversi
 {
-  class application
-  {
-  public:
-    application();
-    virtual ~application();
-  };
+    class application
+    {
+    public:
+        application();
+        virtual ~application();
+    };
 }
 
 #endif /* !defined(APPLICATION_HH) */
