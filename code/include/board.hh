@@ -27,7 +27,7 @@ namespace reversi
      * Displays the board in the terminal.
      * Bitboards are supposed to be correct here.
      */
-    const void display ();
+    void display ();
     
     /**
      * Flips discs in the indicate direction.
@@ -47,15 +47,15 @@ namespace reversi
      * Returns true if he can move.
      * Otherwise return false.
      */
-    const bool can_move ();
+    bool can_move ();
     
     /**
      * Used to know the winner of the game.
      * Returns black if black won, white if white won and tie if there is a tie.
      */
-    const int end_game_state ();
+    int end_game_state ();
     
-    const bool is_game_over ();
+    bool is_game_over ();
     
     /**
      * Does the calculation of the mobility bitboard for the current player.
@@ -66,7 +66,7 @@ namespace reversi
     /*
      * Returns the mobility bitboard.
      */
-    const bitboard get_mobility_bitboard ();
+    bitboard get_mobility_bitboard ();
     
     /**
      * TODO : DOC
@@ -107,7 +107,7 @@ namespace reversi
     /**
      * Displays the rules of the game.
      */
-    const void display_rules ();
+    void display_rules ();
   };
   
   /**

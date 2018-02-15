@@ -6,7 +6,7 @@
 
 using namespace reversi;
 
-int main (int argc, char *argv[])
+int main ()
 {
   board brd;
   user usr;

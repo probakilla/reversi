@@ -32,12 +32,12 @@ const bool WHITE_TURN = false;
 namespace reversi
 {
   /* ==== PROTOTYPE ==== Initialization is temporary. */
-  board::board () : _black_turn (DEFAULT_INIT_TURN), _board_size (DEFAULT_SIZE),
-		    _nb_cases (pow (_board_size, 2))
+  board::board () :  _board_size (DEFAULT_SIZE),
+		     _nb_cases (pow (_board_size, 2)),
+		     _black_turn (DEFAULT_INIT_TURN)
   {
     /* Because there is one bit for the end of a row. */
     ++_board_size;
-    display_rules ();
     _black_bitboard = _white_bitboard = 0;
     /* Places the four initial discs. */
     /* First black disc. */
@@ -54,7 +54,7 @@ namespace reversi
   board::~board () {}
   
   /* Prototype d'affichage des rêgles. */
-  const void board::display_rules ()
+  void board::display_rules ()
   {
     cout << "Bienvenue dans le jeu de reversi.\n";
     cout << "Le but du jeu est d'avoir plus de pions que son adversaire ";
@@ -91,27 +91,28 @@ namespace reversi
 			       int coordinates, bool disc_flipped)
   {
     if ((current_bitboard >> (coordinates) & 1ULL) == 1)
-      /* There is a disc of the same player next to the placed discs
-	 so the move is illegal */
-      if (!disc_flipped)
-	return -1;
+      {
+	/* There is a disc of the same player next to the placed discs
+	   so the move is illegal */
+	if (!disc_flipped)
+	  return -1;
     
-      else
-	{
-	  /* Move is legal so real bitboards become the copied. */
-	  if (_black_turn)
-	    {
-	      _white_bitboard = opponent_bitboard;
-	      _black_bitboard = current_bitboard;
-	    }
-	  else
-	    {
-	      _black_bitboard = opponent_bitboard;
-	      _white_bitboard = current_bitboard;
-	    }
-	  return 1;
-	}
-    
+	else
+	  {
+	    /* Move is legal so real bitboards become the copied. */
+	    if (_black_turn)
+	      {
+		_white_bitboard = opponent_bitboard;
+		_black_bitboard = current_bitboard;
+	      }
+	    else
+	      {
+		_black_bitboard = opponent_bitboard;
+		_white_bitboard = current_bitboard;
+	      }
+	    return 1;
+	  }
+      }
     /* There is not a disc so we can not flip. */
     if ((opponent_bitboard >> (coordinates) & 1ULL) == 0)
       return -1;
@@ -342,11 +343,11 @@ namespace reversi
 	    bitboard_wining_discs |= (DISC << coordinates);
 	  }
 	return false;
-	break;
-      }  
+      }
+    return false;
   }
   
-  const void board::display ()
+  void board::display ()
   {
     char collumn ('A');
     int i, j = 0, check, line = 1;
@@ -409,28 +410,28 @@ namespace reversi
     /* display (); */
   }
   
-  const bool board::can_move ()
+  bool board::can_move ()
   {
     if (_mobility_bitboard == 0)
       return false;
     return true;
   }
   
-  const int board::end_game_state ()
+  int board::end_game_state ()
   {
     int nb_white_discs = 0, nb_black_discs = 0;
     int i;
     for (i = 0; i < _nb_cases; i++)
       {
 	/* Counts the number of white discs. */
-	if ((_white_bitboard >> 1) & 1ULL == 1)
+	if ((_white_bitboard >> 1) & (1ULL == 1))
 	  nb_white_discs ++;
-	_white_bitboard >= 1;
+	_white_bitboard = _white_bitboard >> 1;
         
 	/* Counts the number of black discs. */
-	if ((_black_bitboard >> 1) & 1ULL == 1)
+	if ((_black_bitboard >> 1) & (1ULL == 1))
 	  nb_black_discs ++;
-	_black_bitboard >= 1;
+	_black_bitboard = _black_bitboard >> 1;
       }
     
     if (nb_black_discs > nb_white_discs)
@@ -440,7 +441,7 @@ namespace reversi
     return tie;
   }
   
-  const bool board::is_game_over ()
+  bool board::is_game_over ()
   {
     if (can_move ())
       return false;
@@ -545,7 +546,7 @@ namespace reversi
     _mobility_bitboard = moves;
   }
   
-  const  board::bitboard board::get_mobility_bitboard ()
+  board::bitboard board::get_mobility_bitboard ()
   {
     return _mobility_bitboard;
   }

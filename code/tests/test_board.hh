@@ -10,7 +10,7 @@ namespace tests
   class test_board : public CppUnit::TestCase
   {
     CPPUNIT_TEST_SUITE (test_board);
-    CPPUNIT_TEST (dummy_test);
+    CPPUNIT_TEST (test_check_bitboard);
     CPPUNIT_TEST_SUITE_END ();
     
   private:
@@ -20,7 +20,7 @@ namespace tests
      * Function used to check if a bitboard correspond the wanted
      * value by dividing it in two __int64.
      */
-    void check_bitboard (__int128 expected, __int128 acutal);
+    bool check_bitboard (__int128 expected, __int128 acutal);
   public:
 
     /*
@@ -33,8 +33,10 @@ namespace tests
      */
     void tearDown ();
 
-    /* TO DELETE */
-    void dummy_test ();
+    /*
+     * Testing the check_bitboard function.
+     */
+    void test_check_bitboard ();
   };
 }
 
