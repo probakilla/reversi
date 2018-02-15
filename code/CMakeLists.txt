@@ -8,7 +8,7 @@ add_library (libreversi src/board.cc src/player.cc src/user.cc src/random_ia.cc)
 target_include_directories (libreversi PUBLIC $(CMAKE_CURRENT_SOURCE_DIR))
 
 include_directories (include)
-include_directories (include_tests)
+include_directories (tests)
 
 find_library (CPPUNIT_LIBRARY_DEBUG NAMES cppunit cppunit_dll
   cppunitd cppunitd_dll
