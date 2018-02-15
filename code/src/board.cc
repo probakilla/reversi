@@ -123,6 +123,10 @@ namespace reversi
   
   bool board::flip_discs (int coordinates, int dir)
   {
+    /* We check that the location is discs' free. */
+    if (((_white_bitboard >> (coordinates) & 1ULL) == 1) || (_black_bitboard >> (coordinates) & 1ULL) == 1)
+      return false;
+    
     bool disc_flipped = false;
     bitboard bitboard_losing_discs, bitboard_wining_discs;
     
@@ -511,11 +515,6 @@ namespace reversi
 	  case south_east :
 	    negative_shift = false;
 	    shift = _board_size + 1;
-	    break;
-	    
-	  default :
-	    /* Invalid direction. */
-	    throw string ("ERREUR : Direction invalide\n");
 	    break;
 	  }
 	
